@@ -1,0 +1,17 @@
+# Development / Build
+node_modules/
+dist/
+types-package/
+.git/
+
+# Config files (not needed by consumers)
+tsconfig.json
+.npmrc
+.gitignore
+.eslintrc*
+.prettierrc*
+babel.config.*
+metro.config.*
+
+# Storybook config (stories themselves are included)
+.storybook/

@@ -1,0 +1,1 @@
+export { WavyTabBar } from './WavyTabBar';
