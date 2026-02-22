@@ -125,27 +125,124 @@ const styles = StyleSheet.create({
 
 ## Component Catalog
 
-| Category | Components |
-|----------|-----------|
-| **UI Primitives** | `Avatar`, `BottomSheet`, `Button`, `Card`, `EmptyState`, `ErrorState`, `Input`, `LoadingState`, `SearchBar`, `SectionHeader`, `StatusBadge` |
-| **Atoms** | `Text`, `Icon`, `GradientView`, `GradientIcon`, `GradientText`, `Badge`, `Pill`, `Divider`, `PaginationDots`, `Skeleton`, `SkeletonText`, `SkeletonCard` |
-| **Molecules** | `CategoryChip`, `FilterChipBar`, `IconInfoRow`, `InfoRow`, `AttendeeAvatarStack`, `GreetingHeader`, `NotificationBell`, `CartButton`, `MenuGroup`, `MenuRow` |
-| **Organisms** | `GradientButton`, `OutlinedButton`, `ScreenHeader`, `HeroEventCard`, `EventListCard`, `EventGridCard`, `EventCarouselCard`, `FeaturedCarousel`, `AnnouncementBanner`, `CartSummaryBar` |
-| **Cards** | `MenuItemCard`, `NotificationCard`, `OrderCard`, `PollCard`, `VendorCard` |
-| **Display** | `EventHero`, `OrderTimeline`, `QRCodeDisplay` |
-| **Layout** | `ProfileHeader`, `Screen` |
-| **Navigation** | `WavyTabBar` |
+### Atoms (`components/ui/atoms/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `Text` | Themed text with design-system typography and color presets | `variant` (`display` · `h1` · `h2` · `h3` · `body-lg` · `body` · `label` · `caption`), `color`, `weight` |
+| `Icon` | Ionicons wrapper with named size presets | `name`, `size` (`sm` · `md` · `lg` · `xl` or number), `color` |
+| `GradientView` | LinearGradient wrapper with variant-driven gradient presets | `variant` (`primary` · `card` · `subtle` · `hero`), `colors`, `children` |
+| `GradientIcon` | Ionicon rendered with a primary gradient fill via MaskedView | `name`, `size` |
+| `GradientText` | Text rendered with a horizontal primary gradient fill | `children` (string), `style` |
+| `Badge` | Numeric badge or dot indicator, overlaid on icons | `count`, `dot`, `color`, `max` |
+| `Pill` | Rounded label chip with semantic color variants | `label`, `variant` (`default` · `primary` · `accent` · `success` · `error` · `warning` · `pending`), `size` |
+| `Divider` | Horizontal or vertical 1px divider line | `color`, `spacing` (`none` · `sm` · `md` · `lg`), `vertical` |
+| `PaginationDots` | Animated carousel pagination dots driven by Reanimated SharedValue | `total`, `activeIndex` (SharedValue) |
+| `Skeleton` | Animated shimmer loading placeholder | `width`, `height`, `borderRadius` |
+| `SkeletonText` | Multiple skeleton lines simulating text | `lines`, `spacing` |
+| `SkeletonCard` | Full-width skeleton rectangle simulating a card | `height` |
+
+### Molecules (`components/ui/molecules/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `CategoryChip` | Pressable category filter chip with gradient border | `label`, `selected`, `onPress`, `emoji` |
+| `FilterChipBar` | Horizontally scrollable row of CategoryChips | `options` (`{id, label, emoji}[]`), `selected`, `onSelect` |
+| `IconInfoRow` | Gradient label with a value underneath | `icon`, `label`, `value` |
+| `InfoRow` | Key/value row with label left, value right | `label`, `value`, `valueColor`, `last` |
+| `AttendeeAvatarStack` | Overlapping row of attendee avatars with "+N" overflow | `avatars` (string[]), `count`, `size`, `overlap` |
+| `GreetingHeader` | Time-aware greeting ("Good morning, Name 👋") | `name`, `subtitle` |
+| `NotificationBell` | Bell icon button with Badge overlay | `unreadCount`, `onPress` |
+| `CartButton` | Bag icon button with Badge overlay | `itemCount`, `onPress` |
+| `MenuGroup` | Groups MenuRow children under an optional section title | `title`, `children` |
+| `MenuRow` | Settings/profile row with icon, label, chevron | `icon`, `label`, `description`, `onPress`, `destructive`, `showChevron` |
+
+### Organisms (`components/ui/organisms/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `GradientButton` | Primary CTA button with gradient background and haptic feedback | `onPress`, `children`, `loading`, `disabled`, `size` (`sm` · `md` · `lg`), `fullWidth` |
+| `OutlinedButton` | Secondary button with colored outline border | `onPress`, `children`, `loading`, `disabled`, `size`, `color` (`primary` · `accent` · `error`) |
+| `ScreenHeader` | Top navigation bar with back button, title, and action slots | `title`, `subtitle`, `onBack`, `rightActions`, `transparent` |
+| `HeroEventCard` | Large hero-sized event card with gradient overlay and attendees | `event`, `onPress`, `attendeeAvatars`, `attendeeCount`, `activeIndex`, `total` |
+| `EventListCard` | Compact horizontal event card for list views | `event`, `onPress` |
+| `EventGridCard` | Half-width event card for 2-column grid layouts | `event`, `onPress` |
+| `EventCarouselCard` | Swipeable carousel event card with favourite toggle | `event`, `onPress`, `attendeeCount`, `attendeeAvatars`, `activeIndex` (SharedValue) |
+| `FeaturedCarousel` | Horizontal carousel with snap scrolling and animated scaling | `events` (Event[]), `onEventPress` |
+| `AnnouncementBanner` | Dismissable announcement banner with priority-based styling | `announcement`, `onDismiss`, `onPress` |
+| `CartSummaryBar` | Sticky bottom bar with cart total and checkout CTA | `itemCount`, `total`, `onCheckout`, `storeName` |
+
+### UI Primitives (`components/ui/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `Avatar` | Circular avatar with image support and initials fallback | `imageUrl`, `name`, `size` (`xs` · `sm` · `md` · `lg` · `xl`) |
+| `BottomSheet` | Modal bottom sheet with gesture dismissal and blur backdrop | `visible`, `onClose`, `children`, `variant` (`action` · `select` · `preview`), `title` |
+| `Button` | Multi-variant button with gradient primary and loading state | `onPress`, `children`, `variant`, `size`, `loading`, `disabled`, `icon`, `fullWidth` |
+| `Card` | Themed card container with optional press handler | `children`, `onPress`, `variant` (`surface` · `elevated`) |
+| `EmptyState` | Empty state placeholder with gradient icon and action button | `icon`, `title`, `description`, `actionLabel`, `onAction` |
+| `ErrorState` | Error state placeholder with retry button | `message`, `onRetry` |
+| `Input` | Animated floating-label text input with error/hint states | `label`, `error`, `hint`, `leftIcon`, + `TextInputProps` |
+| `LoadingState` | Centered loading spinner with gradient mask | `message` |
+| `SearchBar` | Search input with gradient icon, clear, and filter buttons | `value`, `onChangeText`, `placeholder`, `onClear`, `onFilter`, `filterCount` |
+| `SectionHeader` | Section title with optional emoji/icon and action link | `title`, `emoji`, `icon`, `actionLabel`, `onAction` |
+| `StatusBadge` | Semantic status badge with variant-based coloring | `label`, `variant` (`warning` · `success` · `error` · `pending` · `completed` · `info`) |
+
+### Cards (`components/cards/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `MenuItemCard` | Food/drink menu item with image, price (ZAR), and quantity | `item` (MenuItem), `onPress`, `quantity` |
+| `NotificationCard` | Notification with type-based icon, relative time, unread indicator | `notification` (Notification), `onPress` |
+| `OrderCard` | Order summary with status badge, store name, and total | `order` (Order), `storeName`, `onPress` |
+| `PollCard` | Interactive poll with vote counts/percentages and active/closed state | `poll` (Poll), `selectedOptionId`, `onVote`, `onPress` |
+| `VendorCard` | Vendor/store card with logo, name, and status badge | `store` (StorePublic), `onPress` |
+
+### Display (`components/display/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `EventHero` | Full-bleed event hero image with gradient overlay | `event` (EventWithOrganiser), `style` |
+| `OrderTimeline` | Vertical step-by-step order progress timeline | `currentStatus` (OrderStatus), `style` |
+| `QRCodeDisplay` | QR code via react-native-qrcode-svg with optional label | `value`, `size`, `label`, `style` |
+
+### Layout (`components/layout/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `ProfileHeader` | User profile header with avatar, name, and edit button | `user` (Profile \| null), `onEditPress` |
+| `Screen` | Root screen wrapper with safe area and themed background | `children`, `scrollable`, `style`, `edges`, `withOrbs` |
+
+### Navigation (`components/navigation/`)
+
+| Component | Description | Key Props |
+|-----------|-------------|-----------|
+| `WavyTabBar` | Custom animated bottom tab bar with SVG wavy notch | Accepts `BottomTabBarProps`; route icons mapped by name |
+
+### Utilities (`components/utils/`)
+
+| Export | Description |
+|--------|-------------|
+| `getInitials(name)` | Extracts uppercase initials ("John Doe" → "JD") |
+| `formatCurrency(amount)` | Formats as ZAR currency ("R 49.99") |
+| `formatRelative(date)` | Relative time string ("2 days ago") via date-fns |
+| `formatDate(date)` | Formats as "dd MMM yyyy" ("15 Mar 2026") |
+| `getCategoryLabel(category)` | Maps slug to display label ("food" → "Food & Drink") |
+| `getOrderStatusLabel(status)` | Maps OrderStatus to readable label ("pending" → "Pending") |
+| `ORDER_TIMELINE_STEPS` | Ordered status array: pending → confirmed → preparing → ready → collected |
 
 ## Theme Tokens
 
-The design system exports these token objects:
+All tokens are exported from `theme/tokens.ts` as `const` objects.
 
-- **`colors`** — Dark-theme color palette with semantic status colors
-- **`gradients`** — Predefined gradient color arrays
-- **`spacing`** — Consistent spacing scale (`xs` 4px → `4xl` 48px)
-- **`radius`** — Border radius values (`sm` 8px → `full` 9999px)
-- **`typography`** — Font size, line-height, and weight presets
-- **`shadows`** — Shadow styles including glow effects
+| Token | Type | Contents |
+|-------|------|----------|
+| `colors` | Object | `background`, `surface`, `elevated`, `border`, `textPrimary`, `textSecondary`, `textTertiary`, `textInverse`, `primary`, `accent`, `gradientStart`, `gradientEnd`, `status` (warning/success/error/pending/completed/info — each with `bg`, `border`, `text`) |
+| `gradients` | Object | `primary`, `primaryReversed`, `card`, `subtle`, `hero` — each a `[string, string]` color array |
+| `spacing` | Object | `xs` (4), `sm` (8), `md` (12), `lg` (16), `xl` (20), `2xl` (24), `3xl` (32), `4xl` (48) |
+| `radius` | Object | `sm` (8), `md` (12), `lg` (16), `xl` (24), `full` (9999) |
+| `typography` | Object | `display`, `h1`, `h2`, `h3`, `bodyLg`, `body`, `label`, `caption` — each with `size`, `lineHeight`, `weight` |
+| `shadows` | Object | `xs`, `sm`, `lg`, `glowPrimary` (blue glow), `glowAccent` (teal glow) |
 
 ## Peer Dependencies
 
