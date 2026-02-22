@@ -20,6 +20,7 @@ export function MenuItemCard({ item, onPress, quantity = 0, className = '' }: Me
       style={{
         flexDirection: 'row',
         backgroundColor: colors.surface,
+        borderRadius: radius.md,
         padding: 12,
         borderWidth: 1,
         borderColor: colors.border,
