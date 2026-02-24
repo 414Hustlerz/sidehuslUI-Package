@@ -1,8 +1,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import type { Order } from '@sidehusl/types';
+import type { Order } from '@414hustlerz/types';
 import { StatusBadge } from '../ui/StatusBadge';
-import { getOrderStatusLabel } from '../utils';
-import { formatCurrency, formatRelative } from '../utils';
+import { getOrderStatusLabel, formatCurrency, formatRelative } from '../utils';
 import { colors, radius } from '../../theme/tokens';
 
 interface OrderCardProps {

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { View } from 'react-native';
 import { ProfileHeader } from './ProfileHeader';
-import type { Profile } from '@sidehusl/types';
+import type { Profile } from '@414hustlerz/types';
 
 const meta: Meta<typeof ProfileHeader> = {
   title: 'Layout/ProfileHeader',

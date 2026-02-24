@@ -20,13 +20,18 @@ interface EventCarouselCardProps {
   activeIndex?: SharedValue<number>;
   /** Number of items in the carousel — omit to hide dots */
   total?: number;
+  /** Controlled wishlist state — when provided, onWishlistToggle is used instead of local state */
+  isWishlisted?: boolean;
+  /** Callback when wishlist button is pressed (controlled mode) */
+  onWishlistToggle?: () => void;
 }
 
-export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvatars = [], activeIndex, total }: EventCarouselCardProps) {
+export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvatars = [], activeIndex, total, isWishlisted, onWishlistToggle }: EventCarouselCardProps) {
   const fallbackIndex = useSharedValue(0);
   const resolvedIndex = activeIndex ?? fallbackIndex;
   const date = new Date(event.start_date);
-  const [isFavourited, setIsFavourited] = useState(false);
+  const [localWishlisted, setLocalWishlisted] = useState(false);
+  const wishlisted = isWishlisted ?? localWishlisted;
 
   return (
     <TouchableOpacity
@@ -57,9 +62,16 @@ export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvata
           colors={['transparent', colors.surface]}
           style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60 }}
         />
-        {/* Favourite button */}
+        {/* Wishlist button */}
         <TouchableOpacity
-          onPress={(e) => { e.stopPropagation(); setIsFavourited((v) => !v); }}
+          onPress={(e) => {
+            e.stopPropagation();
+            if (onWishlistToggle) {
+              onWishlistToggle();
+            } else {
+              setLocalWishlisted((v) => !v);
+            }
+          }}
           style={{
             position: 'absolute',
             top: 10,
@@ -72,7 +84,7 @@ export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvata
             justifyContent: 'center',
           }}
         >
-          <GradientIcon name={isFavourited ? 'heart' : 'heart-outline'} size={17} />
+          <GradientIcon name={wishlisted ? 'bookmark' : 'bookmark-outline'} size={17} />
         </TouchableOpacity>
 
         {/* Pagination dots — overlaid at bottom of image, right above title */}

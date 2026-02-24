@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { Notification } from '@sidehusl/types';
+import type { Notification } from '@414hustlerz/types';
 import { formatRelative } from '../utils';
 import { colors, radius } from '../../theme/tokens';
 

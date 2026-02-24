@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import type { StorePublic } from '@sidehusl/types';
+import type { StorePublic } from '@414hustlerz/types';
 import { StatusBadge } from '../ui/StatusBadge';
 import { colors, radius } from '../../theme/tokens';
 

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import type { EventWithOrganiser } from '@sidehusl/types';
+import type { EventWithOrganiser } from '@414hustlerz/types';
 import { formatDate } from '../utils';
 import { getCategoryLabel } from '../utils';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,7 +27,7 @@ export function EventHero({ event, style }: EventHeroProps) {
       <View style={styles.content}>
         <View style={styles.categoryBadge}>
           <Text style={styles.categoryText}>
-            {getCategoryLabel(event.category)}
+            {getCategoryLabel(event.category ?? 'other')}
           </Text>
         </View>
         <Text style={styles.title}>{event.title}</Text>
@@ -39,7 +39,7 @@ export function EventHero({ event, style }: EventHeroProps) {
         </View>
         <View style={[styles.infoRow, { marginTop: 4 }]}>
           <Ionicons name="location-outline" size={14} color="white" />
-          <Text style={styles.infoText}>{event.venue_name}</Text>
+          <Text style={styles.infoText}>{event.venue_name ?? 'Venue TBA'}</Text>
         </View>
       </View>
     </View>

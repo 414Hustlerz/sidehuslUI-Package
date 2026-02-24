@@ -8,3 +8,4 @@ export { CartButton } from './CartButton';
 export { InfoRow } from './InfoRow';
 export { MenuGroup } from './MenuGroup';
 export { MenuRow } from './MenuRow';
+export { SegmentControl } from './SegmentControl';

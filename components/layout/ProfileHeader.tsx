@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Avatar } from '../ui/Avatar';
 import { GradientIcon } from '../ui/atoms/GradientIcon';
 import { colors, radius } from '../../theme/tokens';
-import type { Profile } from '@sidehusl/types';
+import type { Profile } from '@414hustlerz/types';
 
 interface ProfileHeaderProps {
   user: Profile | null;
