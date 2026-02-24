@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { OrderStatus } from '@sidehusl/types';
+import type { OrderStatus } from '@414hustlerz/types';
 import { getOrderStatusLabel, ORDER_TIMELINE_STEPS } from '../utils';
 import { colors, typography } from '../../theme/tokens';
 
