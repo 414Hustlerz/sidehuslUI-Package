@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import type { MenuItem } from '@sidehusl/types';
+import type { MenuItem } from '@414hustlerz/types';
 import { formatCurrency } from '../utils';
 import { colors, radius } from '../../theme/tokens';
 

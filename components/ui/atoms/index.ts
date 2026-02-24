@@ -8,3 +8,4 @@ export { Pill } from './Pill';
 export { Divider } from './Divider';
 export { PaginationDots } from './PaginationDots';
 export { Skeleton, SkeletonText, SkeletonCard } from './Skeleton';
+export { SideHuslLogo } from './SideHuslLogo';

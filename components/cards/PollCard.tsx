@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import type { Poll } from '@sidehusl/types';
+import type { Poll } from '@414hustlerz/types';
 import { StatusBadge } from '../ui/StatusBadge';
 import { colors, radius } from '../../theme/tokens';
 
