@@ -3,3 +3,4 @@ export { NotificationCard } from './NotificationCard';
 export { OrderCard } from './OrderCard';
 export { PollCard } from './PollCard';
 export { VendorCard } from './VendorCard';
+export { OrganiserCard } from './OrganiserCard';
