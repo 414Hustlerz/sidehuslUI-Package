@@ -76,6 +76,8 @@ export interface Event extends BaseEntity {
   max_transfers_per_ticket: number | null;
   cancellation_reason: string | null;
   admin_notes: string | null;
+  is_free: boolean;
+  ticket_price: string | null;
 }
 
 export interface EventWithOrganiser extends Event {
@@ -197,7 +199,8 @@ export interface Order extends BaseEntity {
   ready_at: string | null;
   collected_at: string | null;
   cancelled_at: string | null;
-  items: OrderItem[];
+  items?: OrderItem[];
+  stores?: OrderStoreInfo;
 }
 
 // ─── Engagement ─────────────────────────────────────────────────────────
@@ -275,6 +278,144 @@ export interface Notification extends BaseEntity {
   body: string;
   data: Record<string, unknown> | null;
   is_read: boolean;
+}
+
+// ─── Order Store Info (enriched orders) ─────────────────────────────────
+
+export interface OrderStoreInfo {
+  display_name: string;
+  events: Pick<Event, 'title' | 'start_date' | 'venue_name'>;
+}
+
+// ─── Saved Events ──────────────────────────────────────────────────────
+
+export interface SavedEvent {
+  event_id: string;
+  events: Pick<Event, 'title' | 'venue_name' | 'start_date' | 'status' | 'image_url'>;
+}
+
+// ─── Event Policies ────────────────────────────────────────────────────
+
+export interface EventPolicy {
+  content: string;
+  version: number;
+  updated_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Emergency Contacts ────────────────────────────────────────────────
+
+export interface EmergencyContact extends BaseEntity {
+  event_id: string;
+  name: string;
+  phone: string;
+  role: string | null;
+  sort_order: number;
+  is_active: boolean;
+}
+
+// ─── Incidents ─────────────────────────────────────────────────────────
+
+export type IncidentType = 'medical' | 'fight' | 'theft' | 'harassment' | 'hazard' | 'other';
+export type IncidentStatus = 'submitted' | 'acknowledged' | 'handling' | 'resolved' | 'escalated';
+
+export interface Incident extends BaseEntity {
+  event_id: string;
+  reported_by: string;
+  incident_type: IncidentType;
+  description: string;
+  location_detail: string | null;
+  occurred_at: string | null;
+  status: IncidentStatus;
+  incident_number: string;
+}
+
+// ─── Notification Preferences ──────────────────────────────────────────
+
+export interface NotificationPreferences {
+  user_id: string;
+  preferences: Record<string, boolean>;
+}
+
+// ─── Help Center ───────────────────────────────────────────────────────
+
+export interface HelpCategory extends BaseEntity {
+  title: string;
+  slug: string;
+  description: string | null;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export interface HelpArticleSummary {
+  id: string;
+  title: string;
+  slug: string;
+  published_at: string;
+}
+
+export interface HelpCategoryWithArticles extends HelpCategory {
+  articles: HelpArticleSummary[];
+}
+
+export interface HelpArticle extends BaseEntity {
+  title: string;
+  slug: string;
+  body: string;
+  tags: string[] | null;
+  category: Pick<HelpCategory, 'id' | 'title' | 'slug'>;
+  published_at: string;
+}
+
+// ─── Disputes ──────────────────────────────────────────────────────────
+
+export type DisputeReason = 'wrong_items' | 'missing_items' | 'quality' | 'not_received' | 'overcharged' | 'other';
+export type DisputeStatus = 'open' | 'under_review' | 'resolved' | 'closed';
+
+export interface Dispute extends BaseEntity {
+  order_id: string;
+  customer_id: string;
+  dispute_number: string;
+  reason: DisputeReason;
+  description: string;
+  status: DisputeStatus;
+  resolution: string | null;
+  resolution_type: string | null;
+  refund_approved: boolean | null;
+  refund_amount: number | null;
+  resolved_at: string | null;
+}
+
+// ─── Support Tickets ───────────────────────────────────────────────────
+
+export type TicketCategory = 'order' | 'account' | 'event' | 'vendor' | 'other';
+export type TicketStatus = 'open' | 'in_progress' | 'waiting_on_user' | 'resolved' | 'closed' | 'escalated';
+export type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
+
+export interface SupportTicket extends BaseEntity {
+  ticket_number: string;
+  user_id: string;
+  category: TicketCategory;
+  subject: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  event_id: string | null;
+  order_id: string | null;
+  assigned_to: string | null;
+  resolved_at: string | null;
+  closed_at: string | null;
+}
+
+export interface TicketMessage extends BaseEntity {
+  ticket_id: string;
+  sender_id: string;
+  body: string;
+  is_internal: boolean;
+}
+
+export interface SupportTicketWithMessages extends SupportTicket {
+  messages: TicketMessage[];
 }
 
 // ─── Wallet (mock - not implemented in API) ─────────────────────────────
