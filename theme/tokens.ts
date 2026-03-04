@@ -101,3 +101,23 @@ export const shadows = {
     elevation: 8,
   },
 } as const;
+
+// ─── Utility Functions ──────────────────────────────────────────
+
+export function withOpacity(hexColor: string, opacity: number): string {
+  const hex = hexColor.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return `rgba(${r},${g},${b},${opacity})`;
+}
+
+export const overlays = {
+  subtle: 'rgba(255,255,255,0.04)',
+  border: 'rgba(255,255,255,0.06)',
+  primaryLight: 'rgba(0,102,204,0.08)',
+  primaryMedium: 'rgba(0,102,204,0.2)',
+  accentLight: 'rgba(0,201,177,0.1)',
+  accentMedium: 'rgba(0,201,177,0.2)',
+  errorLight: 'rgba(239,71,111,0.2)',
+} as const;

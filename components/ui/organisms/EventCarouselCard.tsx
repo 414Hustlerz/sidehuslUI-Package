@@ -1,12 +1,11 @@
 import { TouchableOpacity, View, Text } from 'react-native';
-import { useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radius } from '../../../theme/tokens';
+import { haptics } from '../../utils/haptics';
 import { GradientIcon } from '../atoms/GradientIcon';
-import { AttendeeAvatarStack } from '../molecules/AttendeeAvatarStack';
 import { PaginationDots } from '../atoms/PaginationDots';
 import type { Event } from '@414hustlerz/types';
 import { format } from 'date-fns';
@@ -14,28 +13,29 @@ import { format } from 'date-fns';
 interface EventCarouselCardProps {
   event: Event;
   onPress: () => void;
-  attendeeCount?: number;
-  attendeeAvatars?: string[];
   /** Pass in a carousel-driven SharedValue to show animated dots over the image */
   activeIndex?: SharedValue<number>;
   /** Number of items in the carousel — omit to hide dots */
   total?: number;
-  /** Controlled wishlist state — when provided, onWishlistToggle is used instead of local state */
-  isWishlisted?: boolean;
-  /** Callback when wishlist button is pressed (controlled mode) */
-  onWishlistToggle?: () => void;
+  /** Controlled save/bookmark state */
+  isSaved?: boolean;
+  /** Callback when bookmark button is pressed */
+  onToggleSave?: () => void;
+  /** Callback when share button is pressed */
+  onShare?: () => void;
 }
 
-export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvatars = [], activeIndex, total, isWishlisted, onWishlistToggle }: EventCarouselCardProps) {
+export function EventCarouselCard({ event, onPress, activeIndex, total, isSaved, onToggleSave, onShare }: EventCarouselCardProps) {
   const fallbackIndex = useSharedValue(0);
   const resolvedIndex = activeIndex ?? fallbackIndex;
   const date = new Date(event.start_date);
-  const [localWishlisted, setLocalWishlisted] = useState(false);
-  const wishlisted = isWishlisted ?? localWishlisted;
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => {
+        haptics.light();
+        onPress();
+      }}
       activeOpacity={0.88}
       style={{
         borderRadius: radius.xl,
@@ -62,15 +62,11 @@ export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvata
           colors={['transparent', colors.surface]}
           style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60 }}
         />
-        {/* Wishlist button */}
+        {/* Save/bookmark button */}
         <TouchableOpacity
           onPress={(e) => {
             e.stopPropagation();
-            if (onWishlistToggle) {
-              onWishlistToggle();
-            } else {
-              setLocalWishlisted((v) => !v);
-            }
+            onToggleSave?.();
           }}
           style={{
             position: 'absolute',
@@ -84,7 +80,7 @@ export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvata
             justifyContent: 'center',
           }}
         >
-          <GradientIcon name={wishlisted ? 'bookmark' : 'bookmark-outline'} size={17} />
+          <GradientIcon name={isSaved ? 'bookmark' : 'bookmark-outline'} size={17} />
         </TouchableOpacity>
 
         {/* Pagination dots — overlaid at bottom of image, right above title */}
@@ -124,14 +120,15 @@ export function EventCarouselCard({ event, onPress, attendeeCount, attendeeAvata
         {/* Divider */}
         <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 10 }} />
 
-        {/* Attendees + Share */}
+        {/* Price + Share */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          {attendeeCount !== undefined && attendeeCount > 0 ? (
-            <AttendeeAvatarStack avatars={attendeeAvatars} count={attendeeCount} size={22} overlap={8} />
-          ) : (
-            <View />
-          )}
-          <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={(e) => e.stopPropagation()}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <GradientIcon name="pricetag" size={14} />
+            <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '700' }}>
+              {event.is_free ? 'Free' : event.ticket_price ? `From R${parseFloat(event.ticket_price).toFixed(0)}` : 'Price TBA'}
+            </Text>
+          </View>
+          <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={(e) => { e.stopPropagation(); onShare?.(); }}>
             <GradientIcon name="share-social" size={18} />
           </TouchableOpacity>
         </View>

@@ -9,3 +9,7 @@ export { Divider } from './Divider';
 export { PaginationDots } from './PaginationDots';
 export { Skeleton, SkeletonText, SkeletonCard } from './Skeleton';
 export { SideHuslLogo } from './SideHuslLogo';
+export { PulsingDot } from './PulsingDot';
+export { OTPInput } from './OTPInput';
+export { PasswordStrengthBar } from './PasswordStrengthBar';
+export { StarRow } from './StarRow';

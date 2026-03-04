@@ -4,3 +4,7 @@ export { OrderCard } from './OrderCard';
 export { PollCard } from './PollCard';
 export { VendorCard } from './VendorCard';
 export { OrganiserCard } from './OrganiserCard';
+export { CategoryCard } from './CategoryCard';
+export { QuickCategoryTile } from './QuickCategoryTile';
+export { RatingCard } from './RatingCard';
+export { SessionCard } from './SessionCard';

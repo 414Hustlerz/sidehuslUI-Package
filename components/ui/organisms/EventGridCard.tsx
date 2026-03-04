@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text, Dimensions } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radius } from '../../../theme/tokens';
@@ -6,23 +6,25 @@ import { GradientIcon } from '../atoms/GradientIcon';
 import type { Event } from '@414hustlerz/types';
 import { format } from 'date-fns';
 
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 48) / 2;
-
 interface EventGridCardProps {
   event: Event;
   onPress: () => void;
+  compact?: boolean;
 }
 
-export function EventGridCard({ event, onPress }: EventGridCardProps) {
+export function EventGridCard({ event, onPress, compact = false }: EventGridCardProps) {
   const date = new Date(event.start_date);
+
+  const s = compact
+    ? { imageH: 96, pad: 8, gap: 4, titleSize: 12, titleLH: 16, metaSize: 10, metaLH: 13, fadeH: 32, emojiSize: 28, iconSize: 10 }
+    : { imageH: 120, pad: 10, gap: 5, titleSize: 13, titleLH: 18, metaSize: 11, metaLH: 14, fadeH: 40, emojiSize: 36, iconSize: 11 };
 
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.85}
       style={{
-        width: CARD_WIDTH,
+        flex: 1,
         borderRadius: radius.lg,
         overflow: 'hidden',
         backgroundColor: colors.surface,
@@ -31,7 +33,7 @@ export function EventGridCard({ event, onPress }: EventGridCardProps) {
       }}
     >
       {/* Image */}
-      <View style={{ width: '100%', height: 120 }}>
+      <View style={{ width: '100%', height: s.imageH }}>
         {event.image_url ? (
           <Image
             source={{ uri: event.image_url }}
@@ -40,30 +42,30 @@ export function EventGridCard({ event, onPress }: EventGridCardProps) {
           />
         ) : (
           <View style={{ width: '100%', height: '100%', backgroundColor: colors.elevated, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 36 }}>🎉</Text>
+            <Text style={{ fontSize: s.emojiSize }}>🎉</Text>
           </View>
         )}
         <LinearGradient
           colors={['transparent', colors.surface]}
-          style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 40 }}
+          style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: s.fadeH }}
         />
       </View>
 
       {/* Content */}
-      <View style={{ padding: 10, gap: 5 }}>
-        <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '600', lineHeight: 18 }} numberOfLines={2}>
+      <View style={{ padding: s.pad, gap: s.gap }}>
+        <Text style={{ color: '#FFFFFF', fontSize: s.titleSize, fontWeight: '600', lineHeight: s.titleLH }} numberOfLines={2}>
           {event.title}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
-          <GradientIcon name="calendar" size={11} />
-          <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, lineHeight: 14 }} numberOfLines={1}>
+          <GradientIcon name="calendar" size={s.iconSize} />
+          <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: s.metaSize, lineHeight: s.metaLH }} numberOfLines={1}>
             {format(date, 'EEE, MMM d · h:mm a')}
           </Text>
         </View>
         {event.venue_name && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <GradientIcon name="location" size={11} />
-            <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, lineHeight: 14 }} numberOfLines={1}>
+            <GradientIcon name="location" size={s.iconSize} />
+            <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: s.metaSize, lineHeight: s.metaLH }} numberOfLines={1}>
               {event.venue_name}
             </Text>
           </View>
