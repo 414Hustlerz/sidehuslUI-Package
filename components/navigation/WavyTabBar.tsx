@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Dimensions, Text as RNText } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,16 +12,17 @@ import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { colors, gradients } from '../../theme/tokens';
+import { haptics } from '../utils/haptics';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TAB_BAR_HEIGHT = 70;
 const WAVE_WIDTH = 80;
-const WAVE_HEIGHT = 44; // deeper valley
+const WAVE_HEIGHT = 44;
 
 // Must be module-level — do not create inside a component
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-const TAB_ICONS: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
+const DEFAULT_ICONS: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
   index:     { active: 'home',    inactive: 'home' },
   search:    { active: 'search',  inactive: 'search' },
   favorites: { active: 'heart',   inactive: 'heart' },
@@ -29,7 +30,7 @@ const TAB_ICONS: Record<string, { active: keyof typeof Ionicons.glyphMap; inacti
   profile:   { active: 'person',  inactive: 'person' },
 };
 
-const TAB_LABELS: Record<string, string> = {
+const DEFAULT_LABELS: Record<string, string> = {
   index:     'Home',
   search:    'Search',
   favorites: 'Favorites',
@@ -58,7 +59,18 @@ function getTabCenter(index: number, tabCount: number): number {
   return tabWidth * index + tabWidth / 2;
 }
 
-export function WavyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+interface WavyTabBarProps extends BottomTabBarProps {
+  /** Custom icon map per route name */
+  iconMap?: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }>;
+  /** Custom label map per route name */
+  labelMap?: Record<string, string>;
+  /** Dynamic icon callback — overrides iconMap when provided */
+  getTabIcon?: (routeName: string, isFocused: boolean) => keyof typeof Ionicons.glyphMap;
+  /** Badge counts per route name */
+  badges?: Record<string, number>;
+}
+
+export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, getTabIcon, badges }: WavyTabBarProps) {
   const insets = useSafeAreaInsets();
   const tabCount = state.routes.length;
   const tabWidth = SCREEN_WIDTH / tabCount;
@@ -78,6 +90,9 @@ export function WavyTabBar({ state, descriptors, navigation }: BottomTabBarProps
   const animatedWaveProps = useAnimatedProps(() => ({
     d: buildWavePath(waveX.value, barHeight),
   }));
+
+  const icons = iconMap ?? DEFAULT_ICONS;
+  const labels = labelMap ?? DEFAULT_LABELS;
 
   return (
     <View
@@ -121,21 +136,31 @@ export function WavyTabBar({ state, descriptors, navigation }: BottomTabBarProps
               canPreventDefault: true,
             });
             if (!isFocused && !event.defaultPrevented) {
+              haptics.selection();
               navigation.navigate(route.name);
             }
           };
 
-          const iconSet = TAB_ICONS[route.name] ?? { active: 'ellipse', inactive: 'ellipse-outline' };
-          const label = TAB_LABELS[route.name] ?? route.name;
+          let iconName: keyof typeof Ionicons.glyphMap;
+          if (getTabIcon) {
+            iconName = getTabIcon(route.name, isFocused);
+          } else {
+            const iconSet = icons[route.name] ?? { active: 'ellipse', inactive: 'ellipse-outline' };
+            iconName = isFocused ? iconSet.active : iconSet.inactive;
+          }
+
+          const label = labels[route.name] ?? route.name;
+          const badgeCount = badges?.[route.name];
 
           return (
             <TabItem
               key={route.key}
               width={tabWidth}
               isFocused={isFocused}
-              iconName={isFocused ? iconSet.active : iconSet.inactive}
+              iconName={iconName}
               label={label}
               onPress={onPress}
+              badge={badgeCount}
             />
           );
         })}
@@ -150,9 +175,10 @@ interface TabItemProps {
   iconName: keyof typeof Ionicons.glyphMap;
   label: string;
   onPress: () => void;
+  badge?: number;
 }
 
-function TabItem({ width, isFocused, iconName, label, onPress }: TabItemProps) {
+function TabItem({ width, isFocused, iconName, label, onPress, badge }: TabItemProps) {
   const translateY = useSharedValue(isFocused ? -24 : 0);
   const scale = useSharedValue(isFocused ? 1.1 : 1);
 
@@ -202,6 +228,7 @@ function TabItem({ width, isFocused, iconName, label, onPress }: TabItemProps) {
             }}
           >
             <Ionicons name={iconName} size={28} color="#FFFFFF" />
+            {badge != null && badge > 0 && <BadgeDot count={badge} />}
           </LinearGradient>
         ) : (
           <View
@@ -214,9 +241,41 @@ function TabItem({ width, isFocused, iconName, label, onPress }: TabItemProps) {
             }}
           >
             <Ionicons name={iconName} size={28} color={colors.textTertiary} />
+            {badge != null && badge > 0 && <BadgeDot count={badge} />}
           </View>
         )}
       </Animated.View>
     </TouchableOpacity>
+  );
+}
+
+function BadgeDot({ count }: { count: number }) {
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top: -2,
+        right: -2,
+        minWidth: 18,
+        height: 18,
+        borderRadius: 9,
+        backgroundColor: colors.status.error.text,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 4,
+        borderWidth: 2,
+        borderColor: colors.surface,
+      }}
+    >
+      <RNText
+        style={{
+          color: '#FFFFFF',
+          fontSize: 10,
+          fontWeight: '700',
+        }}
+      >
+        {count > 99 ? '99+' : count}
+      </RNText>
+    </View>
   );
 }

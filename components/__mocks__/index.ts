@@ -22,6 +22,8 @@ export const mockEvents: Event[] = [
     max_transfers_per_ticket: null,
     cancellation_reason: null,
     admin_notes: null,
+    is_free: false,
+    ticket_price: null,
   },
   {
     id: 'evt-2',
@@ -44,6 +46,8 @@ export const mockEvents: Event[] = [
     max_transfers_per_ticket: null,
     cancellation_reason: null,
     admin_notes: null,
+    is_free: false,
+    ticket_price: null,
   },
   {
     id: 'evt-3',
@@ -66,6 +70,8 @@ export const mockEvents: Event[] = [
     max_transfers_per_ticket: null,
     cancellation_reason: null,
     admin_notes: null,
+    is_free: false,
+    ticket_price: null,
   },
   {
     id: 'evt-4',
@@ -88,6 +94,8 @@ export const mockEvents: Event[] = [
     max_transfers_per_ticket: null,
     cancellation_reason: null,
     admin_notes: null,
+    is_free: false,
+    ticket_price: null,
   },
   {
     id: 'evt-5',
@@ -110,6 +118,8 @@ export const mockEvents: Event[] = [
     max_transfers_per_ticket: null,
     cancellation_reason: null,
     admin_notes: null,
+    is_free: false,
+    ticket_price: null,
   },
 ];
 
@@ -141,3 +151,62 @@ export const mockAnnouncement: Announcement = {
   sent_by: 'org-1',
   recipient_count: null,
 };
+
+// ─── Rating Mocks ───────────────────────────────────────────────
+
+export const mockRating = {
+  customerName: 'Thabo M.',
+  rating: 4,
+  comment: 'Great food and quick service!',
+  date: '5 Mar 2026',
+  storeName: "Thabo's Kitchen",
+};
+
+export const mockRatingSummary = {
+  averageRating: 4.2,
+  totalCount: 48,
+  distribution: [
+    { stars: 5, count: 22 },
+    { stars: 4, count: 14 },
+    { stars: 3, count: 8 },
+    { stars: 2, count: 3 },
+    { stars: 1, count: 1 },
+  ],
+};
+
+// ─── Session Mocks ──────────────────────────────────────────────
+
+export const mockSessions = [
+  {
+    deviceName: 'iPhone 15 Pro',
+    deviceType: 'phone' as const,
+    location: 'Johannesburg, SA',
+    ipAddress: '102.134.xx.xx',
+    lastActive: '5 Mar, 14:30',
+    isCurrent: true,
+  },
+  {
+    deviceName: 'MacBook Pro',
+    deviceType: 'desktop' as const,
+    location: 'Cape Town, SA',
+    ipAddress: '41.185.xx.xx',
+    lastActive: '4 Mar, 09:15',
+    isCurrent: false,
+  },
+];
+
+// ─── Stat Mocks ─────────────────────────────────────────────────
+
+export const mockStats = [
+  { icon: 'calendar', iconColor: '#0066CC', label: 'Active Events', value: 3, trend: { direction: 'up' as const, value: '12%' } },
+  { icon: 'people', iconColor: '#00C9B1', label: 'Total Attendees', value: '1.2K', trend: { direction: 'up' as const, value: '8%' } },
+  { icon: 'wallet', iconColor: '#FFD166', label: 'Revenue', value: 'R24.5K' },
+  { icon: 'storefront', iconColor: '#06D6A0', label: 'Active Vendors', value: 18, trend: { direction: 'down' as const, value: '3%' } },
+];
+
+// ─── FAQ Mocks ──────────────────────────────────────────────────
+
+export const mockFAQs = [
+  { question: 'How do I create an event?', answer: 'Navigate to the dashboard and tap "Create Event". Fill in the details and publish.', category: 'Events' },
+  { question: 'How do payouts work?', answer: 'Payouts are processed weekly via EFT to your registered bank account.', category: 'Payments' },
+];

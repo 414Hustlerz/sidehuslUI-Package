@@ -1,14 +1,3 @@
-import type {
-  EventWithOrganiser,
-  EventLineup,
-  EventSponsor,
-  Announcement,
-  Order,
-  Wallet,
-  PollStatus,
-  ContentReportType,
-} from './index';
-
 // API error shape returned by the Flask backend
 export interface ApiError {
   error: string;
@@ -80,6 +69,7 @@ export interface EventFilters {
   search?: string;
   start_after?: string;
   start_before?: string;
+  organiser_id?: string;
 }
 
 export interface OrderFilters {
@@ -100,25 +90,53 @@ export interface MyEventsFilters {
   status?: 'active' | 'upcoming' | 'history';
 }
 
+// ─── Event detail (GET /events/:id/full) ────────────────────────────────
+
+export interface EventDetailResponse {
+  event: import('./index').Event;
+  organiser: Pick<import('./index').Profile, 'id' | 'full_name' | 'avatar_url'> | null;
+  attendee_count: number;
+  attendee_avatars?: string[];
+  lineups: import('./index').EventLineup[];
+  sponsors: import('./index').EventSponsor[];
+  is_saved: boolean;
+  has_access: boolean;
+  access_type: import('./index').AccessType | null;
+  timing_status: string;
+}
+
+// ─── Organiser public profile (GET /organisers/:id/profile) ─────────
+
+export interface OrganiserProfileResponse {
+  organiser: {
+    id: string;
+    full_name: string;
+    avatar_url: string | null;
+  };
+  events: import('./index').Event[];
+  event_count: number;
+  follower_count: number;
+}
+
 // ─── Composite response types ──────────────────────────────────────────
 
 export interface FullEventResponse {
-  event: EventWithOrganiser;
-  lineups: EventLineup[];
-  sponsors: EventSponsor[];
-  announcements: Announcement[];
+  event: import('./index').EventWithOrganiser;
+  lineups: import('./index').EventLineup[];
+  sponsors: import('./index').EventSponsor[];
+  announcements: import('./index').Announcement[];
 }
 
 export interface HubResponse {
-  event: EventWithOrganiser;
-  orders: Order[];
-  announcements: Announcement[];
-  wallet: Wallet | null;
-  countdown: { ends_at: string; seconds_remaining: number } | null;
+  event: import('./index').Event;
+  active_orders: import('./index').Order[];
+  announcements: import('./index').Announcement[];
 }
 
 export interface EventSummaryResponse {
-  event: EventWithOrganiser;
+  event_id: string;
+  access_type: string;
+  checked_in_at: string | null;
   orders_count: number;
   total_spent: number;
   polls_voted: number;
@@ -127,7 +145,7 @@ export interface EventSummaryResponse {
 export interface MyEventPollResponse {
   id: string;
   question: string;
-  status: PollStatus;
+  status: import('./index').PollStatus;
   user_vote: string | null;
   winner: string | null;
   winner_percent: number | null;
@@ -140,7 +158,114 @@ export interface CartValidationResponse {
 }
 
 export interface ReportContentRequest {
-  content_type: ContentReportType;
+  content_type: import('./index').ContentReportType;
   target_id: string;
   reason: string;
+}
+
+// ─── Security ──────────────────────────────────────────────────────────
+
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
+}
+
+export interface EmailChangeRequest {
+  new_email: string;
+}
+
+// ─── Incidents ─────────────────────────────────────────────────────────
+
+export interface CreateIncidentRequest {
+  incident_type: import('./index').IncidentType;
+  description: string;
+  location_detail?: string;
+  occurred_at?: string;
+}
+
+// ─── Notification Preferences ──────────────────────────────────────────
+
+export interface UpdateNotificationPrefsRequest {
+  preferences: Record<string, boolean>;
+}
+
+// ─── Disputes ──────────────────────────────────────────────────────────
+
+export interface CreateDisputeRequest {
+  reason: import('./index').DisputeReason;
+  description: string;
+}
+
+// ─── Support Tickets ───────────────────────────────────────────────────
+
+export interface CreateTicketRequest {
+  category: import('./index').TicketCategory;
+  subject: string;
+  message: string;
+  event_id?: string;
+  order_id?: string;
+}
+
+export interface CreateTicketMessageRequest {
+  body: string;
+}
+
+// ─── Search ───────────────────────────────────────────────────────────
+
+export interface SearchRequest {
+  query: string;
+  type?: 'events' | 'organisers' | 'vendors';
+  lat?: number;
+  lng?: number;
+  limit?: number;
+  offset?: number;
+}
+
+export interface SearchEventResult {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  venue_name: string | null;
+  start_date: string;
+  end_date: string;
+  image_url: string | null;
+  status: string;
+  organiser_id: string;
+  rank: number;
+  distance_km: number | null;
+}
+
+export interface SearchOrganiserResult {
+  id: string;
+  full_name: string;
+  avatar_url: string | null;
+  rank: number;
+}
+
+export interface SearchVendorResult {
+  id: string;
+  user_id: string;
+  business_name: string;
+  business_description: string | null;
+  logo_url: string | null;
+  avg_rating: string | null;
+  total_ratings: number;
+  rank: number;
+}
+
+export interface SearchResponse {
+  events: SearchEventResult[];
+  organisers: SearchOrganiserResult[];
+  vendors: SearchVendorResult[];
+}
+
+// ─── Pagination ────────────────────────────────────────────────────────
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  per_page: number;
+  has_next: boolean;
 }

@@ -8,3 +8,5 @@ export { EventCarouselCard } from './EventCarouselCard';
 export { FeaturedCarousel } from './FeaturedCarousel';
 export { AnnouncementBanner } from './AnnouncementBanner';
 export { CartSummaryBar } from './CartSummaryBar';
+export { HorizontalEventScroll } from './HorizontalEventScroll';
+export { RatingSummaryCard } from './RatingSummaryCard';
