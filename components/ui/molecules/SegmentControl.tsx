@@ -9,16 +9,24 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useState } from 'react';
 import { colors, radius, gradients } from '../../../theme/tokens';
+import { haptics } from '../../utils/haptics';
+
+interface ScrollableRef {
+  scrollToTop?: (params?: { animated?: boolean }) => void;
+  scrollToOffset?: (params: { offset: number; animated?: boolean }) => void;
+}
 
 interface SegmentControlProps {
   segments: string[];
   selected: number;
   onSelect: (index: number) => void;
+  /** Optional ref to a scrollable list (FlashList, ScrollView, etc.) — auto-scrolls to top on segment change */
+  scrollRef?: React.RefObject<ScrollableRef | null>;
 }
 
 const SPRING_CONFIG = { damping: 16, stiffness: 140, mass: 0.8 };
 
-export function SegmentControl({ segments, selected, onSelect }: SegmentControlProps) {
+export function SegmentControl({ segments, selected, onSelect, scrollRef }: SegmentControlProps) {
   const [containerWidth, setContainerWidth] = useState(0);
   const activeIndex = useSharedValue(selected);
 
@@ -87,7 +95,18 @@ export function SegmentControl({ segments, selected, onSelect }: SegmentControlP
             label={label}
             index={index}
             activeIndex={activeIndex}
-            onPress={() => onSelect(index)}
+            onPress={() => {
+              onSelect(index);
+              if (scrollRef?.current) {
+                requestAnimationFrame(() => {
+                  if (scrollRef.current?.scrollToTop) {
+                    scrollRef.current.scrollToTop({ animated: false });
+                  } else if (scrollRef.current?.scrollToOffset) {
+                    scrollRef.current.scrollToOffset({ offset: 0, animated: false });
+                  }
+                });
+              }
+            }}
           />
         );
       })}
@@ -111,7 +130,10 @@ function SegmentLabel({ label, index, activeIndex, onPress }: SegmentLabelProps)
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => {
+        haptics.selection();
+        onPress();
+      }}
       style={styles.segment}
       activeOpacity={0.7}
     >

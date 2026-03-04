@@ -16,5 +16,8 @@ export * from './components/navigation';
 // ─── Theme Tokens ───────────────────────────────────────────────
 export * from './theme/tokens';
 
+// ─── Skeletons ──────────────────────────────────────────────────
+export * from './components/skeletons';
+
 // ─── Utilities ──────────────────────────────────────────────────
 export * from './components/utils';

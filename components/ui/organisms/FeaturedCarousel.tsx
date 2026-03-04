@@ -28,11 +28,12 @@ interface CarouselItemProps {
   snapOffsets: number[];
   scrollX: SharedValue<number>;
   onPress: () => void;
-  attendeeCount?: number;
-  attendeeAvatars?: string[];
+  isSaved?: boolean;
+  onToggleSave?: () => void;
+  onShare?: () => void;
 }
 
-function CarouselItem({ event, index, snapOffsets, scrollX, onPress, attendeeCount, attendeeAvatars }: CarouselItemProps) {
+function CarouselItem({ event, index, snapOffsets, scrollX, onPress, isSaved, onToggleSave, onShare }: CarouselItemProps) {
   const animStyle = useAnimatedStyle(() => {
     // Use actual snap offsets as input range bounds so the animation tracks
     // the non-uniform positions of the first and last cards correctly
@@ -53,8 +54,9 @@ function CarouselItem({ event, index, snapOffsets, scrollX, onPress, attendeeCou
       <EventCarouselCard
         event={event}
         onPress={onPress}
-        attendeeCount={attendeeCount}
-        attendeeAvatars={attendeeAvatars}
+        isSaved={isSaved}
+        onToggleSave={onToggleSave}
+        onShare={onShare}
       />
     </Animated.View>
   );
@@ -64,16 +66,18 @@ interface FeaturedCarouselProps {
   events: Event[];
   onEventPress: (event: Event) => void;
   autoScrollInterval?: number;
-  attendeeCount?: number;
-  attendeeAvatars?: string[];
+  savedEventIds?: Set<string>;
+  onToggleSave?: (eventId: string) => void;
+  onShare?: (event: Event) => void;
 }
 
 export function FeaturedCarousel({
   events,
   onEventPress,
   autoScrollInterval = 5000,
-  attendeeCount,
-  attendeeAvatars,
+  savedEventIds,
+  onToggleSave,
+  onShare,
 }: FeaturedCarouselProps) {
   const aref = useAnimatedRef<Animated.ScrollView>();
   const scrollX = useSharedValue(0);
@@ -126,8 +130,9 @@ export function FeaturedCarousel({
           snapOffsets={snapOffsets}
           scrollX={scrollX}
           onPress={() => onEventPress(event)}
-          attendeeCount={attendeeCount}
-          attendeeAvatars={attendeeAvatars}
+          isSaved={savedEventIds?.has(event.id)}
+          onToggleSave={() => onToggleSave?.(event.id)}
+          onShare={() => onShare?.(event)}
         />
       ))}
     </Animated.ScrollView>

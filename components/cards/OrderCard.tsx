@@ -47,7 +47,7 @@ export function OrderCard({ order, storeName, onPress, className = '' }: OrderCa
       )}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
         <Text style={{ color: colors.textTertiary, fontSize: 13, lineHeight: 18 }}>
-          {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+          {(order.items?.length ?? 0)} item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
         </Text>
         <Text style={{ color: colors.textPrimary, fontSize: 15, fontWeight: '700' }}>
           {formatCurrency(order.total_amount)}

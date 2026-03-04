@@ -1,6 +1,6 @@
 {
   "name": "@414hustlerz/sidehusl-ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React Native UI component library for the Sidehusl ecosystem",
   "main": "index.ts",
   "react-native": "index.ts",

@@ -131,3 +131,20 @@ export const ORDER_TIMELINE_STEPS: OrderStatus[] = [
   'ready',
   'collected',
 ];
+
+// ─── Categories ────────────────────────────────────────────────
+
+export * from './categories';
+
+// ─── Haptics ───────────────────────────────────────────────────
+
+export { haptics } from './haptics';
+
+// ─── Validation ────────────────────────────────────────────────
+
+export { validators, getPasswordStrength, maskEmail } from './validation';
+export type { PasswordStrength } from './validation';
+
+// ─── Hooks ─────────────────────────────────────────────────────
+
+export { useDebounce } from './useDebounce';
