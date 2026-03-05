@@ -6,6 +6,7 @@ import type { OrganiserProfile, Event } from '@414hustlerz/types';
 import { Avatar } from '../ui/Avatar';
 import { GradientIcon } from '../ui/atoms/GradientIcon';
 import { colors, radius, gradients } from '../../theme/tokens';
+import { haptics } from '../utils/haptics';
 import { format } from 'date-fns';
 
 interface OrganiserCardProps {
@@ -14,6 +15,7 @@ interface OrganiserCardProps {
   onToggleFollow: () => void;
   onPress: () => void;
   upcomingEvents?: Event[];
+  onEventPress?: (eventId: string) => void;
 }
 
 const POSTER_SIZE = 88;
@@ -24,6 +26,7 @@ export function OrganiserCard({
   onToggleFollow,
   onPress,
   upcomingEvents = [],
+  onEventPress,
 }: OrganiserCardProps) {
   return (
     <TouchableOpacity
@@ -52,7 +55,7 @@ export function OrganiserCard({
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
               <GradientIcon name="calendar" size={12} />
               <Text style={{ color: colors.textSecondary, fontSize: 12, lineHeight: 16 }}>
-                {organiser.event_count} events
+                {organiser.event_count} {organiser.event_count === 1 ? 'event' : 'events'}
               </Text>
             </View>
             {organiser.location && (
@@ -71,7 +74,10 @@ export function OrganiserCard({
 
         {/* Follow toggle — small circle icon */}
         <TouchableOpacity
-          onPress={onToggleFollow}
+          onPress={() => {
+            haptics.medium();
+            onToggleFollow();
+          }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           style={{
             width: 32,
@@ -127,7 +133,13 @@ export function OrganiserCard({
           }}
         >
           {upcomingEvents.slice(0, 5).map((event) => (
-            <EventPoster key={event.id} event={event} />
+            <TouchableOpacity
+              key={event.id}
+              activeOpacity={0.8}
+              onPress={() => onEventPress?.(event.id)}
+            >
+              <EventPoster event={event} />
+            </TouchableOpacity>
           ))}
         </ScrollView>
       )}
