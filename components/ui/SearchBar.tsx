@@ -1,5 +1,5 @@
 import { View, TextInput, TouchableOpacity, Pressable, Text } from 'react-native';
-import type { RefObject } from 'react';
+import type { Ref } from 'react';
 import { colors } from '../../theme/tokens';
 import { GradientIcon } from './atoms/GradientIcon';
 
@@ -11,7 +11,7 @@ interface SearchBarProps {
   onFilter?: () => void;
   filterCount?: number;
   onPress?: () => void;
-  inputRef?: RefObject<TextInput>;
+  inputRef?: Ref<TextInput>;
   autoFocus?: boolean;
   className?: string;
 }
