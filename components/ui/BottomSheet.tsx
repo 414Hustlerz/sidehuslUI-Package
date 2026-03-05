@@ -1,7 +1,7 @@
 import { View, Modal, Text, ScrollView, Dimensions, Pressable } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { GestureDetector, Gesture, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Svg, { Path } from 'react-native-svg';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Animated, {
@@ -40,6 +40,8 @@ interface BottomSheetProps {
   ctaButton?: BottomSheetCTA;
   /** Expand sheet to near-full screen height */
   fullScreen?: boolean;
+  /** Cap the sheet height (enables scrolling). Overrides fullScreen. Use a fraction of SCREEN_HEIGHT or a fixed number. */
+  maxHeight?: number;
 }
 
 export function BottomSheet({
@@ -52,9 +54,11 @@ export function BottomSheet({
   showHandle,
   ctaButton,
   fullScreen,
+  maxHeight,
 }: BottomSheetProps) {
   const isPreview = variant === 'preview';
-  const resolvedFullScreen = fullScreen ?? isPreview;
+  const resolvedFullScreen = !maxHeight && (fullScreen ?? isPreview);
+  const needsScroll = resolvedFullScreen || !!maxHeight;
   const resolvedShowHandle = showHandle ?? true;
   const resolvedShowTitle = showTitle ?? !isPreview;
   const translateY = useSharedValue(0);
@@ -98,11 +102,13 @@ export function BottomSheet({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
       {/* Backdrop */}
       <Pressable
         style={{ height: resolvedFullScreen ? 60 : undefined, flex: resolvedFullScreen ? undefined : 1 }}
         onPress={onClose}
       >
+
         <BlurView
           intensity={20}
           tint="dark"
@@ -115,7 +121,7 @@ export function BottomSheet({
         style={[
           {
             flex: resolvedFullScreen ? 1 : undefined,
-            maxHeight: resolvedFullScreen ? SCREEN_HEIGHT - 60 : undefined,
+            maxHeight: maxHeight ?? (resolvedFullScreen ? SCREEN_HEIGHT - 60 : undefined),
             backgroundColor: colors.surface,
             borderTopLeftRadius: radius.xl,
             borderTopRightRadius: radius.xl,
@@ -183,9 +189,9 @@ export function BottomSheet({
           </Text>
         )}
 
-        {resolvedFullScreen ? (
+        {needsScroll ? (
           <ScrollView
-            style={{ flex: 1 }}
+            style={{ flex: maxHeight ? undefined : 1 }}
             contentContainerStyle={{ paddingTop: contentPaddingTop, paddingBottom: ctaButton ? 8 : 40 }}
             showsVerticalScrollIndicator={false}
           >
@@ -218,6 +224,7 @@ export function BottomSheet({
           </View>
         )}
       </Animated.View>
+      </GestureHandlerRootView>
     </Modal>
   );
 }

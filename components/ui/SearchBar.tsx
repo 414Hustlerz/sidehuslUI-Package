@@ -1,4 +1,5 @@
-import { View, TextInput, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, Pressable, Text } from 'react-native';
+import type { RefObject } from 'react';
 import { colors } from '../../theme/tokens';
 import { GradientIcon } from './atoms/GradientIcon';
 
@@ -9,6 +10,9 @@ interface SearchBarProps {
   onClear?: () => void;
   onFilter?: () => void;
   filterCount?: number;
+  onPress?: () => void;
+  inputRef?: RefObject<TextInput>;
+  autoFocus?: boolean;
   className?: string;
 }
 
@@ -19,44 +23,62 @@ export function SearchBar({
   onClear,
   onFilter,
   filterCount = 0,
+  onPress,
+  inputRef,
+  autoFocus,
   className = '',
 }: SearchBarProps) {
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-      {/* Input */}
-      <View
+  const isTappable = !!onPress;
+
+  const inputContainer = (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+      }}
+    >
+      <GradientIcon name="search" size={20} />
+      <TextInput
+        ref={inputRef}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor={colors.textTertiary}
+        autoFocus={autoFocus}
+        editable={!isTappable}
+        pointerEvents={isTappable ? 'none' : 'auto'}
         style={{
           flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-          borderRadius: 12,
-          paddingHorizontal: 12,
-          paddingVertical: 10,
+          marginLeft: 8,
+          color: colors.textPrimary,
+          fontSize: 15,
+          paddingVertical: 0,
         }}
-      >
-        <GradientIcon name="search" size={20} />
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={colors.textTertiary}
-          style={{
-            flex: 1,
-            marginLeft: 8,
-            color: colors.textPrimary,
-            fontSize: 15,
-            paddingVertical: 0,
-          }}
-        />
-        {value.length > 0 && (
-          <TouchableOpacity onPress={onClear ?? (() => onChangeText(''))}>
-            <GradientIcon name="close-circle" size={18} />
-          </TouchableOpacity>
-        )}
-      </View>
+      />
+      {value.length > 0 && (
+        <TouchableOpacity onPress={onClear ?? (() => onChangeText(''))}>
+          <GradientIcon name="close-circle" size={18} />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      {isTappable ? (
+        <Pressable onPress={onPress} style={{ flex: 1 }}>
+          {inputContainer}
+        </Pressable>
+      ) : (
+        inputContainer
+      )}
 
       {/* Filter button */}
       {onFilter && (
