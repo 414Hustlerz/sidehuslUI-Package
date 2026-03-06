@@ -113,7 +113,13 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
       >
         <AnimatedPath
           animatedProps={animatedWaveProps}
-          fill={colors.surface}
+          fill="rgba(18,18,26,0.85)"
+        />
+        <AnimatedPath
+          animatedProps={animatedWaveProps}
+          fill="none"
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth={1}
         />
       </Svg>
 
@@ -221,10 +227,10 @@ function TabItem({ width, isFocused, iconName, label, onPress, badge }: TabItemP
               alignItems: 'center',
               justifyContent: 'center',
               shadowColor: colors.primary,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.5,
-              shadowRadius: 12,
-              elevation: 8,
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6,
             }}
           >
             <Ionicons name={iconName} size={28} color="#FFFFFF" />
