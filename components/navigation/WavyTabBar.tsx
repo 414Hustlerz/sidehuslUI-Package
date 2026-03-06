@@ -126,7 +126,7 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
         </Defs>
         <AnimatedPath
           animatedProps={animatedWaveProps}
-          fill="rgba(18,18,26,0.85)"
+          fill="rgba(18,18,26,0.75)"
         />
         <AnimatedPath
           animatedProps={animatedWaveProps}
@@ -136,22 +136,7 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
         />
       </Svg>
 
-      {/* Glow inside the concave — follows active tab */}
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            top: -6,
-            width: GLOW_SIZE,
-            height: GLOW_SIZE,
-            borderRadius: GLOW_SIZE / 2,
-            backgroundColor: colors.primary,
-            opacity: 0.06,
-          },
-          glowStyle,
-        ]}
-        pointerEvents="none"
-      />
+      {/* Glow removed — keeping it clean */}
 
       {/* Tab items */}
       <View
