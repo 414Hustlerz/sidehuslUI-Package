@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Dimensions, Text as RNText } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, RadialGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -21,6 +21,7 @@ const WAVE_HEIGHT = 44;
 
 // Must be module-level — do not create inside a component
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+const GLOW_SIZE = 120;
 
 const DEFAULT_ICONS: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
   index:     { active: 'home',    inactive: 'home' },
@@ -91,6 +92,11 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
     d: buildWavePath(waveX.value, barHeight),
   }));
 
+  // Animated glow position — follows the active tab's concave
+  const glowStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: waveX.value - GLOW_SIZE / 2 }],
+  }));
+
   const icons = iconMap ?? DEFAULT_ICONS;
   const labels = labelMap ?? DEFAULT_LABELS;
 
@@ -105,12 +111,19 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
         backgroundColor: 'transparent',
       }}
     >
-      {/* Animated SVG wave background */}
+      {/* Animated SVG wave background + gradient border */}
       <Svg
         width={SCREEN_WIDTH}
         height={barHeight}
         style={{ position: 'absolute', top: 0 }}
       >
+        <Defs>
+          <SvgLinearGradient id="waveBorderGrad" x1="0" y1="0" x2="1" y2="0">
+            <Stop offset="0" stopColor={colors.gradientStart} stopOpacity={0.15} />
+            <Stop offset="0.5" stopColor={colors.gradientEnd} stopOpacity={0.4} />
+            <Stop offset="1" stopColor={colors.gradientStart} stopOpacity={0.15} />
+          </SvgLinearGradient>
+        </Defs>
         <AnimatedPath
           animatedProps={animatedWaveProps}
           fill="rgba(18,18,26,0.85)"
@@ -118,10 +131,43 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
         <AnimatedPath
           animatedProps={animatedWaveProps}
           fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth={1}
+          stroke="url(#waveBorderGrad)"
+          strokeWidth={1.5}
         />
       </Svg>
+
+      {/* Glow inside the concave — follows active tab */}
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: -6,
+            width: GLOW_SIZE,
+            height: GLOW_SIZE,
+            borderRadius: GLOW_SIZE / 2,
+            backgroundColor: colors.primary,
+            opacity: 0.12,
+          },
+          glowStyle,
+        ]}
+        pointerEvents="none"
+      />
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: 4,
+            width: GLOW_SIZE * 0.6,
+            left: (GLOW_SIZE - GLOW_SIZE * 0.6) / 2,
+            height: GLOW_SIZE * 0.6,
+            borderRadius: (GLOW_SIZE * 0.6) / 2,
+            backgroundColor: colors.gradientEnd,
+            opacity: 0.08,
+          },
+          glowStyle,
+        ]}
+        pointerEvents="none"
+      />
 
       {/* Tab items */}
       <View
@@ -227,10 +273,10 @@ function TabItem({ width, isFocused, iconName, label, onPress, badge }: TabItemP
               alignItems: 'center',
               justifyContent: 'center',
               shadowColor: colors.primary,
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 8,
-              elevation: 6,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.6,
+              shadowRadius: 16,
+              elevation: 10,
             }}
           >
             <Ionicons name={iconName} size={28} color="#FFFFFF" />
