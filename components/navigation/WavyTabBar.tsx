@@ -146,23 +146,7 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
             height: GLOW_SIZE,
             borderRadius: GLOW_SIZE / 2,
             backgroundColor: colors.primary,
-            opacity: 0.12,
-          },
-          glowStyle,
-        ]}
-        pointerEvents="none"
-      />
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            top: 4,
-            width: GLOW_SIZE * 0.6,
-            left: (GLOW_SIZE - GLOW_SIZE * 0.6) / 2,
-            height: GLOW_SIZE * 0.6,
-            borderRadius: (GLOW_SIZE * 0.6) / 2,
-            backgroundColor: colors.gradientEnd,
-            opacity: 0.08,
+            opacity: 0.06,
           },
           glowStyle,
         ]}
