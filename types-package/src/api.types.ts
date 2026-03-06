@@ -269,3 +269,103 @@ export interface PaginatedResponse<T> {
   per_page: number;
   has_next: boolean;
 }
+
+// ─── Vendor Applications ────────────────────────────────────────────────
+
+export interface VendorApplicationCreateRequest {
+  event_id: string;
+  proposed_menu?: string;
+  notes?: string;
+}
+
+export interface VendorApplicationRejectRequest {
+  rejection_reason: string;
+}
+
+export interface VendorApplicationFilters {
+  status?: 'pending' | 'approved' | 'rejected' | 'cancelled';
+}
+
+// ─── Application Messages ───────────────────────────────────────────────
+
+export interface ApplicationMessageCreateRequest {
+  message: string;
+}
+
+// ─── Business Profile ───────────────────────────────────────────────────
+
+export interface BusinessProfileUpdateRequest {
+  company_name?: string;
+  registration_number?: string;
+  business_type?: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  postal_code?: string;
+  bank_name?: string;
+  account_number_last4?: string;
+  branch_code?: string;
+}
+
+// ─── Vendor Profile ─────────────────────────────────────────────────────
+
+export interface VendorProfileUpdateRequest {
+  business_name?: string;
+  business_description?: string;
+  logo_url?: string;
+}
+
+// ─── OAuth ──────────────────────────────────────────────────────────────
+
+export interface OAuthProfileRequest {
+  full_name: string;
+  phone?: string;
+  role?: 'customer' | 'vendor' | 'organiser';
+}
+
+// ─── Financial Filters ──────────────────────────────────────────────────
+
+export interface FinancialTransactionFilters {
+  type?: import('./index').TransactionType;
+  page?: number;
+  per_page?: number;
+}
+
+export interface PayoutFilters {
+  page?: number;
+  per_page?: number;
+}
+
+export interface TransactionListResponse {
+  transactions: import('./index').Transaction[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface PayoutListResponse {
+  payouts: import('./index').Payout[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+// ─── Platform Application ───────────────────────────────────────────────
+
+export interface PlatformApplicationCreateRequest {
+  business_name: string;
+  business_description?: string;
+  documentation_urls?: string[];
+  cipc_registration_number?: string;
+  director_name?: string;
+}
+
+export interface PlatformApplicationRejectRequest {
+  rejection_reason: string;
+}
+
+// ─── Ticket Code ────────────────────────────────────────────────────────
+
+export interface TicketCodeUploadRequest {
+  codes: string[];
+}

@@ -460,6 +460,191 @@ export interface Follow extends BaseEntity {
   following_id: string;
 }
 
+// ─── Vendor Applications ────────────────────────────────────────────────
+
+export type ApplicationStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+
+export interface VendorApplication extends BaseEntity {
+  vendor_id: string;
+  event_id: string;
+  proposed_menu: string;
+  notes: string | null;
+  status: ApplicationStatus;
+  event_fee: string | null;
+  fee_paid: boolean;
+  reviewed_at: string | null;
+  rejection_reason: string | null;
+  vendor_profiles: VendorProfileData | null;
+}
+
+export interface VendorApplicationWithVendor extends VendorApplication {
+  vendor: {
+    id: string;
+    full_name: string;
+    avatar_url: string | null;
+    business_type?: string;
+  };
+  event_title?: string;
+}
+
+// ─── Application Messages ───────────────────────────────────────────────
+
+export interface ApplicationMessage extends BaseEntity {
+  application_id: string;
+  sender_id: string;
+  sender_type: 'organiser' | 'vendor';
+  sender_name: string;
+  message: string;
+}
+
+// ─── Vendor Profile (extended) ──────────────────────────────────────────
+
+export interface VendorProfileData extends BaseEntity {
+  user_id: string;
+  business_name: string | null;
+  business_description: string | null;
+  logo_url: string | null;
+}
+
+// ─── Business Profile ───────────────────────────────────────────────────
+
+export interface BusinessProfileData extends BaseEntity {
+  user_id: string;
+  company_name: string | null;
+  registration_number: string | null;
+  business_type: string | null;
+  address: string | null;
+  city: string | null;
+  province: string | null;
+  postal_code: string | null;
+  bank_name: string | null;
+  account_number_last4: string | null;
+  branch_code: string | null;
+}
+
+// ─── Platform Application ───────────────────────────────────────────────
+
+export type PlatformApplicationStatus = 'pending' | 'approved' | 'rejected';
+
+export interface PlatformApplication extends BaseEntity {
+  user_id: string;
+  application_type: string;
+  business_name: string;
+  business_description: string | null;
+  documentation_urls: string[];
+  status: PlatformApplicationStatus;
+  rejection_reason: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  cipc_registration_number: string | null;
+  director_name: string | null;
+  director_id_verified: boolean;
+  verification_status: string | null;
+  verification_reference: string | null;
+  verified_at: string | null;
+}
+
+// ─── Ticket Codes ───────────────────────────────────────────────────────
+
+export type TicketCodeStatus = 'available' | 'used' | 'invalid';
+
+export interface TicketCode extends BaseEntity {
+  event_id: string;
+  code: string;
+  status: TicketCodeStatus;
+  used_at: string | null;
+  attendee_name: string | null;
+}
+
+// ─── Sponsor Tier ───────────────────────────────────────────────────────
+
+export type SponsorTier = 'platinum' | 'gold' | 'silver' | 'bronze';
+
+// ─── Financial Types ────────────────────────────────────────────────────
+
+export type TransactionType =
+  | 'vendor_fee'
+  | 'ticket_sale'
+  | 'refund'
+  | 'payout'
+  | 'platform_fee'
+  | 'order_payment'
+  | 'event_fee'
+  | 'order_sale';
+
+export type TransactionStatus = 'pending' | 'settled' | 'failed' | 'refunded';
+
+export interface Transaction {
+  id: string;
+  type: TransactionType;
+  description: string;
+  amount: number;
+  status: TransactionStatus;
+  event_id?: string | null;
+  event_title?: string | null;
+  store_name?: string | null;
+  created_at: string;
+}
+
+export type PayoutStatus = 'pending' | 'processing' | 'processed' | 'failed';
+
+export interface Payout {
+  id: string;
+  amount: number;
+  status: PayoutStatus;
+  bank_name: string | null;
+  account_last4: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  processed_at: string | null;
+}
+
+export interface OrganiserFinancialSummary {
+  total_revenue: number;
+  vendor_fees_collected: number;
+  ticket_sales: number;
+  platform_fees: number;
+  net_earnings: number;
+  total_paid_out: number;
+  pending_payouts: number;
+}
+
+export interface VendorFinancialSummary {
+  order_revenue: number;
+  platform_fees: number;
+  net_earnings: number;
+  total_paid_out: number;
+  pending_payouts: number;
+  orders_fulfilled: number;
+  avg_order_value: number;
+}
+
+// ─── Enriched types (used by business app) ──────────────────────────────
+
+export interface VendorStore extends StorePublic {
+  event_id: string;
+  event_title: string;
+  event_date: string;
+  order_count: number;
+  revenue: number;
+}
+
+export interface OrderWithStore extends Order {
+  store_name: string;
+  customer_name?: string;
+}
+
+// ─── Business-side ratings (enriched with names) ────────────────────────
+
+export interface VendorRatingWithNames extends VendorRating {
+  customer_name: string;
+  store_name: string;
+}
+
+export interface EventRatingWithNames extends EventRating {
+  user_name: string;
+}
+
 // ─── Re-export API types ───────────────────────────────────────────────
 
 export * from './api.types';
