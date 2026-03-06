@@ -126,7 +126,7 @@ export function WavyTabBar({ state, descriptors, navigation, iconMap, labelMap, 
         </Defs>
         <AnimatedPath
           animatedProps={animatedWaveProps}
-          fill="rgba(18,18,26,0.75)"
+          fill="rgba(18,18,26,0.95)"
         />
         <AnimatedPath
           animatedProps={animatedWaveProps}
