@@ -1,5 +1,5 @@
-import { format, formatDistanceToNow, isToday, isTomorrow, parseISO } from 'date-fns';
-import type { OrderStatus, Event, EventCategory } from '@414hustlerz/types';
+import { format, formatDistanceToNow, isToday, isTomorrow, parseISO, isAfter, isBefore } from 'date-fns';
+import type { OrderStatus, Event, EventCategory, TicketType } from '@414hustlerz/types';
 
 // ─── General Utilities ──────────────────────────────────────────
 
@@ -8,6 +8,13 @@ export function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'ZAR',
   }).format(amount);
+}
+
+export function formatPrice(amountCents: number): string {
+  if (amountCents === 0) return 'Free';
+  const rands = amountCents / 100;
+  if (Number.isInteger(rands)) return `R${rands.toLocaleString('en-ZA')}`;
+  return `R${rands.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function formatDate(dateString: string): string {
@@ -131,6 +138,49 @@ export const ORDER_TIMELINE_STEPS: OrderStatus[] = [
   'ready',
   'collected',
 ];
+
+// ─── Ticket Utilities ──────────────────────────────────────────
+
+export function getTicketTypeAvailability(ticketType: TicketType): {
+  available: boolean;
+  reason?: string;
+  remaining: number;
+} {
+  const remaining = ticketType.quantity_total - ticketType.quantity_sold;
+  const now = new Date();
+
+  if (!ticketType.is_active) {
+    return { available: false, reason: 'hidden', remaining };
+  }
+
+  if (remaining <= 0) {
+    return { available: false, reason: 'SOLD OUT', remaining: 0 };
+  }
+
+  if (ticketType.sale_starts_at && isAfter(parseISO(ticketType.sale_starts_at), now)) {
+    const dateStr = new Date(ticketType.sale_starts_at).toLocaleDateString('en-ZA', {
+      month: 'short',
+      day: 'numeric',
+    });
+    return { available: false, reason: `Sales open ${dateStr}`, remaining };
+  }
+
+  if (ticketType.sale_ends_at && isBefore(parseISO(ticketType.sale_ends_at), now)) {
+    return { available: false, reason: 'Sales ended', remaining };
+  }
+
+  return { available: true, remaining };
+}
+
+export function isAllFreeEvent(ticketTypes: TicketType[]): boolean {
+  if (ticketTypes.length === 0) return false;
+  return ticketTypes.every((t) => t.price === 0);
+}
+
+export function getMaxQuantity(ticketType: TicketType): number {
+  const remaining = ticketType.quantity_total - ticketType.quantity_sold;
+  return Math.min(ticketType.max_per_order, remaining);
+}
 
 // ─── Categories ────────────────────────────────────────────────
 

@@ -55,6 +55,7 @@ export interface PollVoteRequest {
 
 export interface InitiateTransferRequest {
   recipient_email: string;
+  ticket_id?: string;
 }
 
 export interface ResolveTransferRequest {
@@ -103,6 +104,8 @@ export interface EventDetailResponse {
   has_access: boolean;
   access_type: import('./index').AccessType | null;
   timing_status: string;
+  ticket_types?: import('./index').TicketType[];
+  user_tickets?: import('./index').Ticket[];
 }
 
 // ─── Organiser public profile (GET /organisers/:id/profile) ─────────
@@ -368,4 +371,114 @@ export interface PlatformApplicationRejectRequest {
 
 export interface TicketCodeUploadRequest {
   codes: string[];
+}
+
+// ─── Ticket Sales ──────────────────────────────────────────────────────
+
+export interface PurchaseTicketRequest {
+  ticket_type_id: string;
+  quantity: number;
+}
+
+export interface PurchaseTicketResponse {
+  purchase_id: string;
+  checkout_url: string;
+  checkout_id: string;
+}
+
+export interface PurchaseDetailResponse {
+  purchase: import('./index').TicketPurchase;
+  tickets: import('./index').Ticket[];
+}
+
+export interface MyTicketsResponse {
+  upcoming: import('./index').MyTicketsEvent[];
+  past: import('./index').MyTicketsEvent[];
+}
+
+export interface EventTicketsResponse {
+  event: Pick<import('./index').Event, 'id' | 'title' | 'venue_name' | 'start_date'>;
+  tickets: import('./index').Ticket[];
+}
+
+export interface RefundTicketResponse {
+  ticket: import('./index').Ticket;
+  refund_amount: number;
+  message: string;
+}
+
+export interface BulkRefundRequest {
+  ticket_ids: string[];
+}
+
+export interface BulkRefundResponse {
+  tickets: import('./index').Ticket[];
+  total_refund_amount: number;
+}
+
+export interface RSVPRequest {
+  ticket_type_id: string;
+}
+
+export interface RSVPResponse {
+  ticket: import('./index').Ticket;
+  event_access: import('./index').EventAccessResponse;
+}
+
+export interface TransferTicketRequest {
+  recipient_email: string;
+  ticket_id: string;
+}
+
+export interface CreateTicketTypeRequest {
+  name: string;
+  description?: string;
+  price: number;
+  quantity_total: number;
+  max_per_order: number;
+  sale_starts_at?: string;
+  sale_ends_at?: string;
+  sort_order?: number;
+}
+
+export interface UpdateTicketTypeRequest {
+  name?: string;
+  description?: string;
+  price?: number;
+  quantity_total?: number;
+  max_per_order?: number;
+  sale_starts_at?: string | null;
+  sale_ends_at?: string | null;
+  is_active?: boolean;
+  sort_order?: number;
+}
+
+export interface ValidateEntryRequest {
+  ticket_code: string;
+}
+
+export interface ValidateEntryResponse {
+  valid: boolean;
+  ticket: import('./index').Ticket | null;
+  holder: Pick<import('./index').Profile, 'id' | 'full_name' | 'avatar_url'> | null;
+  reason?: string;
+}
+
+export interface CheckInSummary {
+  total_sold: number;
+  checked_in: number;
+}
+
+// ─── Admin Settings ────────────────────────────────────────────────────
+
+export interface PlatformSettings {
+  platform_fee_percent: number;
+}
+
+export interface PendingPayout {
+  organiser: Pick<import('./index').Profile, 'id' | 'full_name'>;
+  event: Pick<import('./index').Event, 'id' | 'title'>;
+  gross_revenue: number;
+  platform_fee: number;
+  net_amount: number;
 }

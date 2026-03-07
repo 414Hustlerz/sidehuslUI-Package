@@ -78,6 +78,8 @@ export interface Event extends BaseEntity {
   admin_notes: string | null;
   is_free: boolean;
   ticket_price: string | null;
+  refund_policy: RefundPolicy | null;
+  refund_cutoff_hours: number | null;
 }
 
 export interface EventWithOrganiser extends Event {
@@ -390,7 +392,7 @@ export interface Dispute extends BaseEntity {
 // ─── Support Tickets ───────────────────────────────────────────────────
 
 export type TicketCategory = 'order' | 'account' | 'event' | 'vendor' | 'other';
-export type TicketStatus = 'open' | 'in_progress' | 'waiting_on_user' | 'resolved' | 'closed' | 'escalated';
+export type SupportTicketStatus = 'open' | 'in_progress' | 'waiting_on_user' | 'resolved' | 'closed' | 'escalated';
 export type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
 
 export interface SupportTicket extends BaseEntity {
@@ -398,7 +400,7 @@ export interface SupportTicket extends BaseEntity {
   user_id: string;
   category: TicketCategory;
   subject: string;
-  status: TicketStatus;
+  status: SupportTicketStatus;
   priority: TicketPriority;
   event_id: string | null;
   order_id: string | null;
@@ -559,6 +561,79 @@ export interface TicketCode extends BaseEntity {
 // ─── Sponsor Tier ───────────────────────────────────────────────────────
 
 export type SponsorTier = 'platinum' | 'gold' | 'silver' | 'bronze';
+
+// ─── Ticket Sales ──────────────────────────────────────────────────────
+
+export type RefundPolicy = 'no_refunds' | 'full_refund' | 'conditional';
+
+export type TicketStatus = 'active' | 'transferred' | 'refunded' | 'cancelled';
+
+export type PurchaseStatus = 'pending' | 'completed' | 'failed' | 'expired' | 'refunded';
+
+export interface TicketType extends BaseEntity {
+  event_id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  quantity_total: number;
+  quantity_sold: number;
+  max_per_order: number;
+  sale_starts_at: string | null;
+  sale_ends_at: string | null;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface Ticket extends BaseEntity {
+  purchase_id: string;
+  ticket_type_id: string;
+  event_id: string;
+  holder_id: string;
+  ticket_code: string;
+  status: TicketStatus;
+  checked_in_at: string | null;
+  transferred_to: string | null;
+  ticket_type_name: string;
+  ticket_type_price: number;
+  holder_name?: string;
+  event?: {
+    id: string;
+    title: string;
+    start_date: string;
+    end_date?: string;
+    venue_name?: string | null;
+    image_url?: string | null;
+  };
+}
+
+export interface TicketPurchase extends BaseEntity {
+  user_id: string;
+  event_id: string;
+  ticket_type_id: string;
+  quantity: number;
+  total_amount: number;
+  status: PurchaseStatus;
+  checkout_id: string | null;
+  checkout_url: string | null;
+  purchase_number: string;
+  event?: {
+    id: string;
+    title: string;
+    start_date: string;
+    venue_name?: string | null;
+    image_url?: string | null;
+  };
+  ticket_type?: {
+    name: string;
+    price: number;
+  };
+  tickets?: Ticket[];
+}
+
+export interface MyTicketsEvent {
+  event: Pick<Event, 'id' | 'title' | 'venue_name' | 'start_date' | 'end_date' | 'image_url' | 'status'>;
+  tickets: Ticket[];
+}
 
 // ─── Financial Types ────────────────────────────────────────────────────
 

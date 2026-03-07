@@ -23,3 +23,4 @@ export { AnimatedListItem } from './AnimatedListItem';
 export { OfflineBanner } from './OfflineBanner';
 export { ThemedRefreshControl } from './ThemedRefreshControl';
 export { ThemedAlert } from './ThemedAlert';
+export { YocoCheckout } from './YocoCheckout';

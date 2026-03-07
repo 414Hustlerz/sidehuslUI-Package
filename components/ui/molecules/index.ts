@@ -16,3 +16,4 @@ export { TransactionRow } from './TransactionRow';
 export { PayoutCard } from './PayoutCard';
 export { FAQAccordion } from './FAQAccordion';
 export { ToggleRow } from './ToggleRow';
+export { QuantitySelector } from './QuantitySelector';

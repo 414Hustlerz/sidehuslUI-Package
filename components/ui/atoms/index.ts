@@ -13,3 +13,5 @@ export { PulsingDot } from './PulsingDot';
 export { OTPInput } from './OTPInput';
 export { PasswordStrengthBar } from './PasswordStrengthBar';
 export { StarRow } from './StarRow';
+export { TicketStatusBadge } from './TicketStatusBadge';
+export { CapacityBar } from './CapacityBar';

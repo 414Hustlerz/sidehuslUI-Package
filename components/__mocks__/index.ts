@@ -24,6 +24,8 @@ export const mockEvents: Event[] = [
     admin_notes: null,
     is_free: false,
     ticket_price: null,
+    refund_policy: null,
+    refund_cutoff_hours: null,
   },
   {
     id: 'evt-2',
@@ -48,6 +50,8 @@ export const mockEvents: Event[] = [
     admin_notes: null,
     is_free: false,
     ticket_price: null,
+    refund_policy: null,
+    refund_cutoff_hours: null,
   },
   {
     id: 'evt-3',
@@ -72,6 +76,8 @@ export const mockEvents: Event[] = [
     admin_notes: null,
     is_free: false,
     ticket_price: null,
+    refund_policy: null,
+    refund_cutoff_hours: null,
   },
   {
     id: 'evt-4',
@@ -96,6 +102,8 @@ export const mockEvents: Event[] = [
     admin_notes: null,
     is_free: false,
     ticket_price: null,
+    refund_policy: null,
+    refund_cutoff_hours: null,
   },
   {
     id: 'evt-5',
@@ -120,6 +128,8 @@ export const mockEvents: Event[] = [
     admin_notes: null,
     is_free: false,
     ticket_price: null,
+    refund_policy: null,
+    refund_cutoff_hours: null,
   },
 ];
 
