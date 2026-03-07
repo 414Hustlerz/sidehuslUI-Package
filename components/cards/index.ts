@@ -8,3 +8,7 @@ export { CategoryCard } from './CategoryCard';
 export { QuickCategoryTile } from './QuickCategoryTile';
 export { RatingCard } from './RatingCard';
 export { SessionCard } from './SessionCard';
+export { TicketTypeCard } from './TicketTypeCard';
+export { TicketCard } from './TicketCard';
+export { MyTicketsEventCard } from './MyTicketsEventCard';
+export { PurchaseConfirmationCard } from './PurchaseConfirmationCard';
