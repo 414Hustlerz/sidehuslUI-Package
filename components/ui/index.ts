@@ -15,6 +15,7 @@ export { Card } from './Card';
 export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
 export { Input } from './Input';
+export { TextArea } from './TextArea';
 export { LoadingState } from './LoadingState';
 export { SearchBar } from './SearchBar';
 export { SectionHeader } from './SectionHeader';
