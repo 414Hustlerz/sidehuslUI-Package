@@ -27,6 +27,8 @@ export function InfoRow({ label, value, valueColor, last = false }: InfoRowProps
           fontSize: 14,
           fontWeight: '500',
           lineHeight: 20,
+          flex: 1,
+          textAlign: 'right',
         }}
       >
         {value}

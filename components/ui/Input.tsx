@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, type TextInputProps } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -16,6 +16,8 @@ const EASING = Easing.bezier(0.4, 0, 0.2, 1);
 
 const INPUT_HEIGHT = 56;
 const BORDER_RADIUS = 28;
+const MULTILINE_MIN_HEIGHT = 120;
+const MULTILINE_BORDER_RADIUS = 16;
 
 // Label positions
 const LABEL_TOP_RESTING = 19;
@@ -42,12 +44,22 @@ export function Input({
   value,
   onFocus,
   onBlur,
+  multiline,
   ...props
 }: InputProps) {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
   const progress = useSharedValue(value ? FOCUSED : UNFOCUSED);
   const hasError = !!error;
+
+  // Float the label when value is set externally (e.g. form reset/pre-fill)
+  useEffect(() => {
+    if (value && progress.value === UNFOCUSED) {
+      progress.value = withTiming(FOCUSED, { duration: DURATION, easing: EASING });
+    } else if (!value && !isFocused && progress.value === FOCUSED) {
+      progress.value = withTiming(UNFOCUSED, { duration: DURATION, easing: EASING });
+    }
+  }, [value]);
 
   const iconLeft = leftIcon ? 44 : 20;
 
@@ -83,9 +95,11 @@ export function Input({
       <Pressable
         onPress={() => inputRef.current?.focus()}
         style={{
-          height: INPUT_HEIGHT,
+          ...(multiline
+            ? { minHeight: MULTILINE_MIN_HEIGHT }
+            : { height: INPUT_HEIGHT }),
           flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: multiline ? 'flex-start' : 'center',
           backgroundColor: colors.surface,
           borderWidth: 1,
           borderColor: hasError
@@ -93,15 +107,16 @@ export function Input({
             : isFocused
               ? colors.primary
               : colors.border,
-          borderRadius: BORDER_RADIUS,
+          borderRadius: multiline ? MULTILINE_BORDER_RADIUS : BORDER_RADIUS,
           paddingHorizontal: 16,
+          ...(multiline && { paddingTop: 14, paddingBottom: 12 }),
         }}
       >
         {leftIcon && (
-          <View style={{ marginRight: 12 }}>{leftIcon}</View>
+          <View style={{ marginRight: 12, ...(multiline && { marginTop: 2 }) }}>{leftIcon}</View>
         )}
 
-        <View style={{ flex: 1, height: INPUT_HEIGHT, justifyContent: 'center' }}>
+        <View style={{ flex: 1, ...(multiline ? { minHeight: MULTILINE_MIN_HEIGHT - 26 } : { height: INPUT_HEIGHT }), justifyContent: multiline ? 'flex-start' : 'center' }}>
           {label && (
             <Animated.Text
               style={[
@@ -115,7 +130,9 @@ export function Input({
                       : colors.textSecondary,
                   fontWeight: '500',
                 },
-                labelAnimStyle,
+                multiline && isFloating
+                  ? { top: LABEL_TOP_FLOATING, fontSize: LABEL_SIZE_FLOATING }
+                  : labelAnimStyle,
               ]}
               numberOfLines={1}
             >
@@ -127,14 +144,16 @@ export function Input({
             value={value}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            multiline={multiline}
             placeholderTextColor={colors.textTertiary}
             style={{
               color: colors.textPrimary,
               fontSize: 16,
               paddingVertical: 0,
-              marginTop: isFloating && label ? 8 : 0,
-              textAlignVertical: 'center',
+              marginTop: isFloating && label ? (multiline ? 20 : 8) : 0,
+              textAlignVertical: multiline ? 'top' : 'center',
               includeFontPadding: false,
+              ...(multiline && { minHeight: 80 }),
             }}
             {...props}
             placeholder={label ? undefined : props.placeholder}
