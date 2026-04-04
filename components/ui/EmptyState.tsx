@@ -6,6 +6,7 @@ import { GradientIcon } from './atoms/GradientIcon';
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;
+  showIcon?: boolean;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -15,6 +16,7 @@ interface EmptyStateProps {
 
 export function EmptyState({
   icon = 'file-tray-outline',
+  showIcon = true,
   title,
   description,
   actionLabel,
@@ -22,20 +24,22 @@ export function EmptyState({
   className = '',
 }: EmptyStateProps) {
   return (
-    <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 48, paddingHorizontal: 32 }}>
-      <View
-        style={{
-          width: 80,
-          height: 80,
-          borderRadius: 40,
-          backgroundColor: colors.surface,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 16,
-        }}
-      >
-        <GradientIcon name={icon} size={36} />
-      </View>
+    <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: showIcon ? 48 : 24, paddingHorizontal: 32 }}>
+      {showIcon && (
+        <View
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            backgroundColor: colors.surface,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 16,
+          }}
+        >
+          <GradientIcon name={icon} size={36} />
+        </View>
+      )}
       <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: '600', textAlign: 'center', marginBottom: 8 }}>
         {title}
       </Text>
