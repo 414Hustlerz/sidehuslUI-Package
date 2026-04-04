@@ -640,8 +640,7 @@ export interface MyTicketsEvent {
 export type TransactionType =
   | 'vendor_fee'
   | 'ticket_sale'
-  | 'refund'
-  | 'payout'
+  | 'ticket_refund'
   | 'platform_fee'
   | 'order_payment'
   | 'event_fee'
@@ -661,7 +660,7 @@ export interface Transaction {
   created_at: string;
 }
 
-export type PayoutStatus = 'pending' | 'processing' | 'processed' | 'failed';
+export type PayoutStatus = 'pending' | 'processing' | 'processed' | 'scheduled' | 'failed';
 
 export interface Payout {
   id: string;

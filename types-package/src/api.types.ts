@@ -335,6 +335,7 @@ export interface FinancialTransactionFilters {
 }
 
 export interface PayoutFilters {
+  status?: import('./index').PayoutStatus;
   page?: number;
   per_page?: number;
 }
@@ -351,6 +352,28 @@ export interface PayoutListResponse {
   total: number;
   page: number;
   per_page: number;
+}
+
+export interface TransactionExportFilters {
+  type?: import('./index').TransactionType;
+  date_from?: string;
+  date_to?: string;
+}
+
+export interface TransactionExportResponse {
+  transactions: import('./index').Transaction[];
+  total: number;
+}
+
+export interface PayoutExportFilters {
+  status?: import('./index').PayoutStatus;
+  date_from?: string;
+  date_to?: string;
+}
+
+export interface PayoutExportResponse {
+  payouts: import('./index').Payout[];
+  total: number;
 }
 
 // ─── Platform Application ───────────────────────────────────────────────
