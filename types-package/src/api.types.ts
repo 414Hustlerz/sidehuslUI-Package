@@ -22,7 +22,7 @@ export interface JoinEventRequest {
 }
 
 export interface PlaceOrderRequest {
-  store_id: string;
+  deployment_id: string;
   items: CartItemRequest[];
   notes?: string;
   payment_method: 'cash' | 'card';
@@ -35,7 +35,7 @@ export interface CartItemRequest {
 }
 
 export interface CartValidateRequest {
-  store_id: string;
+  deployment_id: string;
   items: CartItemRequest[];
 }
 

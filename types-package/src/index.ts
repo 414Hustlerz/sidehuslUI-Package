@@ -140,15 +140,14 @@ export interface TicketResponse {
 
 // ─── Stores & Menu Items ────────────────────────────────────────────────
 
+// A reusable store concept owned by a vendor — its catalog + theme, independent
+// of any event. Brought to events via StoreDeployment.
 export interface Store extends BaseEntity {
   vendor_id: string;
-  event_id: string;
   display_name: string;
   description: string | null;
   banner_url: string | null;
-  status: StoreStatus;
-  status_reason: string | null;
-  is_active: boolean;
+  theme: string | null;
 }
 
 export interface VendorProfile {
@@ -157,11 +156,26 @@ export interface VendorProfile {
   avatar_url: string | null;
 }
 
-export interface StorePublic extends Store {
-  menu_items: MenuItem[];
-  vendor_profile: VendorProfile;
+// A store concept deployed to a specific event — carries the operational status
+// lifecycle and owns that event's orders. Enriched fields are populated by the
+// business-app endpoints (resolved name, event info, aggregate counts).
+export interface StoreDeployment extends BaseEntity {
+  store_id: string;
+  vendor_id: string;
+  event_id: string;
+  status: StoreStatus;
+  status_reason: string | null;
+  is_active: boolean;
+  display_name_override: string | null;
+  display_name?: string;
+  event_title?: string;
+  event_date?: string;
+  order_count?: number;
+  revenue?: number;
 }
 
+// Catalog item on a store concept. `price` is the base price; `is_available` is
+// the catalog-level toggle (independent of any event).
 export interface MenuItem extends BaseEntity {
   store_id: string;
   name: string;
@@ -170,6 +184,37 @@ export interface MenuItem extends BaseEntity {
   image_url: string | null;
   category: string | null;
   is_available: boolean;
+}
+
+// Per-event override of a catalog item. An exception row: it exists only when an
+// item is hidden or re-priced at a deployment; absence = available at base price.
+export interface DeploymentMenuItem extends BaseEntity {
+  deployment_id: string;
+  menu_item_id: string;
+  is_available: boolean;
+  price_override: number | null;
+}
+
+// A catalog item annotated with its per-event override state — used by the vendor
+// deployment screen (base `price`/`is_available` plus the resolved event state).
+export interface MenuItemAtEvent extends MenuItem {
+  is_available_at_event: boolean;
+  price_override: number | null;
+}
+
+// Customer-facing view of a deployment: `id` is the deployment id. Concept
+// identity + operational status + effective menu (available items, prices applied).
+export interface StorePublic extends BaseEntity {
+  store_id: string;
+  vendor_id: string;
+  event_id: string;
+  display_name: string;
+  description: string | null;
+  banner_url: string | null;
+  status: StoreStatus;
+  status_reason: string | null;
+  menu_items: MenuItem[];
+  vendor_profile: VendorProfile;
 }
 
 // ─── Orders ─────────────────────────────────────────────────────────────
@@ -186,7 +231,7 @@ export interface OrderItem extends BaseEntity {
 export interface Order extends BaseEntity {
   order_number: string;
   customer_id: string;
-  store_id: string;
+  deployment_id: string;
   event_id: string;
   status: OrderStatus;
   total_amount: number;
@@ -695,10 +740,11 @@ export interface VendorFinancialSummary {
 
 // ─── Enriched types (used by business app) ──────────────────────────────
 
-export interface VendorStore extends StorePublic {
-  event_id: string;
-  event_title: string;
-  event_date: string;
+// "My Stores" view — a concept store with its catalog, its deployments across
+// events, and aggregate counts summed across those deployments.
+export interface VendorStore extends Store {
+  menu_items: MenuItem[];
+  deployments?: StoreDeployment[];
   order_count: number;
   revenue: number;
 }
