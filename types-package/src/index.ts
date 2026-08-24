@@ -299,6 +299,7 @@ export interface Announcement extends BaseEntity {
   priority: AnnouncementPriority;
   sent_by: string;
   recipient_count: number | null;
+  sender?: Pick<Profile, 'id' | 'full_name' | 'avatar_url'> | null;
 }
 
 // ─── Transfers ──────────────────────────────────────────────────────────
@@ -332,6 +333,22 @@ export interface Notification extends BaseEntity {
 export interface OrderStoreInfo {
   display_name: string;
   events: Pick<Event, 'title' | 'start_date' | 'venue_name'>;
+}
+
+// ─── Cart (persisted) ────────────────────────────────────────────────────
+
+export interface CartItem {
+  menu_item_id: string;
+  quantity: number;
+  notes?: string | null;
+}
+
+export interface Cart extends BaseEntity {
+  customer_id: string;
+  deployment_id: string;
+  items: CartItem[];
+  notes: string | null;
+  updated_at: string;
 }
 
 // ─── Saved Events ──────────────────────────────────────────────────────

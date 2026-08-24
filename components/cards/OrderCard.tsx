@@ -35,7 +35,7 @@ export function OrderCard({ order, storeName, onPress, className = '' }: OrderCa
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <Text style={{ color: colors.textPrimary, fontSize: 15, fontWeight: '600', lineHeight: 20 }}>
-          #{order.order_number}
+          {order.order_number}
         </Text>
         <StatusBadge
           label={getOrderStatusLabel(order.status)}

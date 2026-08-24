@@ -1,6 +1,6 @@
 {
   "name": "@414hustlerz/types",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "Shared TypeScript types for the Sidehusl ecosystem",
   "main": "src/index.ts",
   "types": "src/index.ts",

@@ -39,6 +39,13 @@ export interface CartValidateRequest {
   items: CartItemRequest[];
 }
 
+// PUT /cart — replaces the persisted cart wholesale.
+export interface CartUpdateRequest {
+  deployment_id: string;
+  items: CartItemRequest[];
+  notes?: string;
+}
+
 export interface VendorRatingRequest {
   rating: number;
   comment?: string;
@@ -154,10 +161,48 @@ export interface MyEventPollResponse {
   winner_percent: number | null;
 }
 
+// POST /cart/validate's actual response shape (order_service.validate_cart) —
+// there is no `valid`/`errors` field: an invalid cart (unavailable item, closed
+// store) is signalled by the request failing with a 400, not a 200 with
+// `valid: false`. This was corrected while wiring the first real consumer
+// (ordering/order-summary) — nothing previously depended on the old shape.
+export interface CartValidationLineItem {
+  menu_item_id: string;
+  name: string;
+  quantity: number;
+  unit_price: string;
+  line_total: string;
+  notes?: string | null;
+}
+
 export interface CartValidationResponse {
-  valid: boolean;
-  errors?: string[];
-  total?: number;
+  deployment_id: string;
+  store_name: string;
+  items: CartValidationLineItem[];
+  total_amount: string;
+}
+
+// POST /orders with payment_method: 'card' returns this instead of a full
+// Order — no order exists yet until the Yoco webhook reports success.
+export interface PlaceOrderCardResponse {
+  payment_intent_id: string;
+  checkout_id: string;
+  checkout_url: string;
+  merchant_transaction_id: string;
+  total_amount: number;
+  status: 'pending_payment';
+}
+
+// POST /orders discriminates on payment_method: a full Order (cash) or a
+// pending payment intent to resolve via the Yoco checkout webview (card).
+export type PlaceOrderResponse = import('./index').Order | PlaceOrderCardResponse;
+
+// GET /payment-intents/:id — polled after the Yoco webview redirects back,
+// since the webhook that actually creates the order may not have landed yet.
+export interface PaymentIntentStatusResponse {
+  id: string;
+  status: 'pending' | 'completed' | 'failed';
+  order_id: string | null;
 }
 
 export interface ReportContentRequest {

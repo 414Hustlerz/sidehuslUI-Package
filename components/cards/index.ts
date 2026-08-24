@@ -1,3 +1,4 @@
+export { AnnouncementCard } from './AnnouncementCard';
 export { MenuItemCard } from './MenuItemCard';
 export { NotificationCard } from './NotificationCard';
 export { OrderCard } from './OrderCard';
